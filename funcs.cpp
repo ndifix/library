@@ -14,6 +14,12 @@ std::string ExtractString(std::string s, int begin, int end){
 	return t; }// [beg, end)を抽出
 int L1_distance(int x1,int y1,int x2,int y2){
 	return (x1<x2?x2-x1:x1-x2)+(y1<y2?y2-y1:y1-y2);}//マンハッタン距離
+long long pow(int base,int exp){
+    long long ret=1;
+    std::vector<long long> buf(32);buf[0]=base;
+    for(int i=1;i<32;i++)buf[i]=buf[i-1]*buf[i-1];
+    for(int i=0;(1<<i)<=exp;i++)if(exp & (1<<i))ret*=buf[i];
+    return ret;}//高速二乗和
 
 struct gragh{
 	int V,E;
