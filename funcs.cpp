@@ -12,6 +12,9 @@ std::string ExtractString(std::string s, int begin, int end){
 	std::string t;
 	for(int i=begin; i<end; i++) t+=s[i];
 	return t; }// [beg, end)を抽出
+int L1_distance(int x1,int y1,int x2,int y2){
+	return (x1<x2?x2-x1:x1-x2)+(y1<y2?y2-y1:y1-y2);}//マンハッタン距離
+
 struct gragh{
 	int V,E;
 	std::vector<std::vector<std::pair<int,int>>> edge; //edge[from][i] ={to,cost}
