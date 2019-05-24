@@ -1,4 +1,7 @@
-#include <bits/stdc++.h>
+#include <vector>
+#include <string>
+#include <map>
+
 #define inf 1e9
 #define mod 1e9+7
 int StringToInt(std::string s){
@@ -14,42 +17,71 @@ std::string ExtractString(std::string s, int begin, int end){
 	return t; }// [beg, end)を抽出
 int L1_distance(int x1,int y1,int x2,int y2){
 	return (x1<x2?x2-x1:x1-x2)+(y1<y2?y2-y1:y1-y2);}//マンハッタン距離
+double L2_distance(int x1,int y1,int x2,int y2){
+	double ret=(x2-x1)*(x2-x1)+(y2-y1)*(y2-y1);
+}
 long long pow(int base,int exp){
     long long ret=1;
     std::vector<long long> buf(32);buf[0]=base;
     for(int i=1;i<32;i++)buf[i]=buf[i-1]*buf[i-1];
     for(int i=0;(1<<i)<=exp;i++)if(exp & (1<<i))ret*=buf[i];
     return ret;}//高速二乗和
+std::vector<std::pair<int,int>> Factorization_v(int n){
+    std::vector<std::pair<int,int>> ret;
+    int base, exp=0;
+    while(n%2==0){n/=2;exp++;}
+    if(exp>0)ret.push_back(std::make_pair(2,exp));
 
-struct gragh{
-	int V,E;
-	std::vector<std::vector<std::pair<int,int>>> edge; //edge[from][i] ={to,cost}
-	//only for 0-indexed 
-	gragh(int v,int e,int *from,int *to,int *cost){
-		V=v;E=e;	std::pair<int,int>p;
-		for(int i=0;i<e;i++){
-			//if(edge.size()<=from[i])edge.resize(from[i]+1);
-			edge.resize(v);
-			p.first=to[i];	p.second=cost[i];	edge[from[i]].push_back(p);
-			p.first=from[i]; p.second=cost[i];	edge[to[i]].push_back(p);
-		} }
-	int dijkstra(int start,int goal){
-		int done[V];	for(int i=0;i<V;i++)done[i]=0;	done[start]=1;
-		int vertex[V];	for(int i=0;i<V;i++)vertex[i]=inf;	vertex[start]=0;
-		std::queue<int> que;	que.push(start);
-		int from, to, cost;
-		while(que.size()!=0){
-			from=que.front();
-			for(int i=0; i<edge[from].size(); i++){
-				to=edge[from][i].first;	cost=edge[from][i].second;
-				if( vertex[to]>vertex[from]+cost){
-					vertex[to]=vertex[from]+cost;
-					que.push(to);
-				}
-			}
-			que.pop();
-		}
-		return vertex[goal];	}
-	int bellmanFord(){
+    base=3;
+    while(n!=1){
+        exp=0;
+        while(n%base==0){n/=base;exp++;}
+        if(exp>0)ret.push_back(std::make_pair(base,exp));
+        base+=2;
+    }
+    return ret;}//素因数分解
+std::map<int,int> Factorization_m(int n){
+    std::map<int,int> ret;
+    int base;
+    while(n%2==0){n/=2;ret[2]++;}
 
-	}};
+    base=3;
+    while(n!=1){
+        while(n%base==0){n/=base;ret[base]++;}
+        base+=2;
+    }
+    return ret;}//素因数分解
+std::map<int,int> Factorization(int n){
+    std::map<int,int> ret;
+    int base;
+    while(n%2==0){n/=2;ret[2]++;}
+
+    base=3;
+    while(n!=1){
+        while(n%base==0){n/=base;ret[base]++;}
+        base+=2;
+    }
+    return ret;}
+std::map<int,int> expLCM(std::map<int,int> A,std::map<int,int> B){
+    std::map<int,int> ret;
+    for(auto itr=A.begin();itr!=A.end();itr++)
+        ret[(*itr).first]+=(*itr).second;
+    for(auto itr=B.begin();itr!=B.end();itr++)
+        ret[(*itr).first]+=(*itr).second;
+    return ret;}
+std::map<int,int> expGCD(std::map<int,int> A,std::map<int,int> B){
+    std::map<int,int> ret;
+    for(auto itr=A.begin();itr!=A.end();itr++){
+        ret[(*itr).first]=std::min(A[(*itr).first],B[(*itr).first]);
+    }
+    for(auto itr=ret.begin();itr!=ret.end();){
+        if((*itr).second==0){ret.erase(itr);itr=ret.begin();}
+        else itr++;
+    }
+    return ret;}
+long long exp_toint(std::map<int,int> e){
+    long long ret=1;
+    for(auto itr=e.begin();itr!=e.end();itr++)
+        ret*=pow((*itr).first,(*itr).second);
+    return ret;
+}
