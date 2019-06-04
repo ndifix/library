@@ -26,3 +26,4 @@ std::map<int,int> mapMerge(std::map<int,int> A, std::map<int,int> B){
     for(std::map<int,int>::iterator itr=B.begin();itr!=B.end();itr++){ret[itr->first]+=itr->second;}
     return ret;
 }
+template<class T>void sort(T &v){std::sort(v.begin(),v.end());}
