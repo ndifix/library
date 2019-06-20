@@ -4,7 +4,7 @@ class bigint{
   const int intmax=1e8;
   const int modd=4;//10^4
     public:
-  std::vector<int> num;//num[i]= k%_mod^i
+  std::vector<int> num;//num[i]= k*(mod^i)
   bigint(){num.push_back(0);};
   bigint(int n){num.push_back(n%mod);num.push_back((n/mod)%mod);num.push_back((n/mod/mod)%mod);shrink();}
   bigint(long long n){long long m=n;while(m){num.push_back(m%mod);m/=mod;}modify();}
