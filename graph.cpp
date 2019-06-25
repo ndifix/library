@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <queue>
 
-struct gragh{
+struct Gragh{
 	int V,E;
 	std::vector<std::vector<std::pair<int,int>>> edge; //edge[from][i] ={to,cost}
 	//only for 0-indexed
@@ -53,4 +53,20 @@ struct gragh{
 	int bellmanFord(){
 
 	}
-    };
+};
+
+class Node{
+		protected:
+	int id, parent, childs;
+	long long sum;
+	int val;
+		public:
+	Node(int v){val=v;id=parent=childs=sum=0;}
+	Node(){val=0;id=parent=childs=sum=0;}
+};
+
+class BinaryTree : Node{
+		protected:
+	int size;
+	
+}
