@@ -2,12 +2,14 @@
 #include <algorithm>
 #include <queue>
 
-struct Gragh{
+namespace ndifix{
+
+class Gragh{
 	int V,E;
 	std::vector<std::vector<std::pair<int,int>>> edge; //edge[from][i] ={to,cost}
 	//only for 0-indexed
     std::vector<std::vector<int>> table;
-	gragh(int v,int e,int *from,int *to,int *cost){
+	Gragh(int v,int e,int *from,int *to,int *cost){
 		V=v;E=e;	std::pair<int,int>p;
 		for(int i=0;i<e;i++){
 			//if(edge.size()<=from[i])edge.resize(from[i]+1);
@@ -56,17 +58,64 @@ struct Gragh{
 };
 
 class Node{
-		protected:
-	int id, parent, childs;
-	long long sum;
-	int val;
 		public:
-	Node(int v){val=v;id=parent=childs=sum=0;}
-	Node(){val=0;id=parent=childs=sum=0;}
+	int id, parent;
+	long long sum;
+	int max,min;
+	int val;
+  std::vector<int> childs;
+	/*
+	Node(int v){val=v;id=parent=sum=0;}
+	Node(){val=0;id=parent=sum=0;}
+	int lbound(int key){int s=0,e=childs.size();int mid;while(e-s>2){mid=(e+s)/2;if(childs[mid] < key)s=mid;else if(childs[mid] > key)e=mid;else if(childs[mid]==key)e=mid+1;}if(childs[s]>=key)return s;if(childs[s+1]>=key)return s+1;return s+2;}
+  void chid(int n){id=n;}
+  void chpar(int n){parent=n;}
+  void addchld(int n){childs.push_back(n);std::sort(childs.begin(),childs.end());}
+	void erasechld(int n){if(childs[lbound(n)]!=n)return;childs.erase(childs.begin()+lbound(n));}
+	*/
 };
 
-class BinaryTree : Node{
-		protected:
-	int size;
-	
-}
+class SegmentTree{
+		private:
+	int size, rank;
+	std::vector<std::vector<Node>> nodes;
+		public:
+	SegmentTree(){}
+	SegmentTree(int s){size=s;nodes.resize(1);nodes[0].resize(s);shrink();}
+	SegmentTree(std::vector<Node> data){size=data.size();nodes.push_back(data);shrink();reset(0,nodes[0].size());}
+	void shrink(){
+		std::vector<ndifix::Node> buf;buf.resize(nodes[0].size());
+		while(buf.size()!=1){
+			buf.resize(buf.size()/2 + !!(buf.size()%2));nodes.push_back(buf);
+		}
+		rank=nodes.size();
+	}
+	void reset(int th){
+		nodes[0][th].min=nodes[0][th].max=nodes[0][th].sum=nodes[0][th].val;th/=2;
+		for(int i=1;i<rank;i++){
+			nodes[i][th].min=(2*th+1>=nodes[i-1].size()?nodes[i-1][2*th].min:std::min(nodes[i-1][2*th].min,nodes[i-1][2*th+1].min));
+			nodes[i][th].max=(2*th+1>=nodes[i-1].size()?nodes[i-1][2*th].max:std::max(nodes[i-1][2*th].max,nodes[i-1][2*th+1].max));
+			nodes[i][th].sum=(2*th+1>=nodes[i-1].size()?nodes[i-1][2*th].sum:nodes[i-1][2*th].sum+nodes[i-1][2*th+1].sum);
+			th/=2;
+		}
+		rank=nodes.size();
+	}
+	void reset(int s,int e){//[s,e)
+		for(int j=s;j<e;j++)nodes[0][j].min=nodes[0][j].max=nodes[0][j].sum=nodes[0][j].val;
+		s/=2;e=(e/2)+!!(e%2);
+		for(int i=1;i<rank;i++){
+			for(int j=s;j<e;j++){
+				nodes[i][j].min=(2*j+1>=nodes[i-1].size()?nodes[i-1][2*j].min:std::min(nodes[i-1][2*j].min,nodes[i-1][2*j+1].min));
+				nodes[i][j].max=(2*j+1>=nodes[i-1].size()?nodes[i-1][2*j].max:std::max(nodes[i-1][2*j].max,nodes[i-1][2*j+1].max));
+				nodes[i][j].sum=(2*j+1>=nodes[i-1].size()?nodes[i-1][2*j].sum:nodes[i-1][2*j].sum+nodes[i-1][2*j+1].sum);
+			}
+			s/=2;e=(e/2)+!!(e%2);
+		}
+		rank=nodes.size();
+	}
+	void chnode(int th,int n){nodes[0][th].val=n;}
+
+	void print(){for(int i=0;i<rank;i++){for(int j=0;j<nodes[i].size();j++){std::cout<<nodes[i][j]<<"   ";}std::cout<<endl;}}
+};
+
+}//end of namespace
