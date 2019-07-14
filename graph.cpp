@@ -9,6 +9,7 @@ class Gragh{
 	std::vector<std::vector<std::pair<int,int>>> edge; //edge[from][i] ={to,cost}
 	//only for 0-indexed
     std::vector<std::vector<int>> table;
+		public:
 	Gragh(int v,int e,int *from,int *to,int *cost){
 		V=v;E=e;	std::pair<int,int>p;
 		for(int i=0;i<e;i++){
@@ -18,8 +19,8 @@ class Gragh{
 			p.first=from[i]; p.second=cost[i];	edge[to[i]].push_back(p);//無向グラフ
 		} }
 	int dijkstra(int start,int goal){
-		int done[V];	for(int i=0;i<V;i++)done[i]=0;	done[start]=1;
-		int vertex[V];	for(int i=0;i<V;i++)vertex[i]=1000000000;	vertex[start]=0;
+		std::vector<int> done(V);	for(int i=0;i<V;i++)done[i]=0;	done[start]=1;
+		std::vector<int> vertex(V);	for(int i=0;i<V;i++)vertex[i]=1000000000;	vertex[start]=0;
 		std::queue<int> que;	que.push(start);
 		int from, to, cost;
 		while(que.size()!=0){
@@ -116,6 +117,45 @@ class SegmentTree{
 	void chnode(int th,int n){nodes[0][th].val=n;}
 
 	void print(){for(int i=0;i<rank;i++){for(int j=0;j<nodes[i].size();j++){std::cout<<nodes[i][j]<<"   ";}std::cout<<endl;}}
+	int find_maxv(int s,int e){
+		//max{x | x in [s,e)}を返す
+    if(s+1>e)return 0;
+    if(s+1==e)return nodes[0][s].max;
+    int ret=nodes[0][s].max;
+    for(int i=rank-1;i>=0;i--){
+      for(int j=0;j<nodes[i].size();j++){
+        if(e <= (1<<i)*j)break;
+        if(s < (1<<i)*j && std::min((1<<i)*(j+1),size) < e)return std::max({find_maxv(s,(1<<i)*j),nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)});
+        if(s == (1<<i)*j && std::min((1<<i)*(j+1),size) == e)return nodes[i][j].max;
+        if(s == (1<<i)*j && std::min((1<<i)*(j+1),size) < e)return std::max(nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e));
+        if(s < (1<<i)*j && std::min((1<<i)*(j+1),size) == e)return std::max(nodes[i][j].max,find_maxv(s,(1<<i)*j));
+      }
+    }
+  }
+  int find_maxp(int s,int e){
+		// y = min{ z | a[z]==max{x|x in [s,e)} } を満たすyを返す
+    if(s+1>e)return 0;
+    if(s+1==e)return s;
+    int ret=nodes[0][s].max;
+    for(int i=rank-1;i>=0;i--){
+      for(int j=0;j<nodes[i].size();j++){
+        if(e <= (1<<i)*j)break;
+        if(s < (1<<i)*j && std::min((1<<i)*(j+1),size) < e){
+          if(std::max({find_maxv(s,(1<<i)*j),nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)}) == nodes[i][j].max)return find_maxp((1<<i)*j,std::min((1<<i)*(j+1),size));
+          if(std::max({find_maxv(s,(1<<i)*j),nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)}) == find_maxv(s,(1<<i)*j))return find_maxp(s,(1<<i)*j);
+          if(std::max({find_maxv(s,(1<<i)*j),nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)}) == find_maxv(std::min((1<<i)*(j+1),size),e))return find_maxp(std::min((1<<i)*(j+1),size),e);
+        }
+        if(s == (1<<i)*j && std::min((1<<i)*(j+1),size) < e){
+          if(std::max(nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)) == nodes[i][j].max)return find_maxp((1<<i)*j , std::min((1<<i)*(j+1),size));
+          if(std::max(nodes[i][j].max,find_maxv(std::min((1<<i)*(j+1),size),e)) == find_maxv(std::min((1<<i)*(j+1),size),e))return find_maxp(std::min((1<<i)*(j+1),size),e);
+        }
+        if(s < (1<<i)*j && std::min((1<<i)*(j+1),size) == e){
+          if(std::max(nodes[i][j].max,find_maxv(s,(1<<i)*j)) == nodes[i][j].max)return find_maxp((1<<i)*j , std::min((1<<i)*(j+1),size));
+          if(std::max(nodes[i][j].max,find_maxv(s,(1<<i)*j)) == find_maxv(s,(1<<i)*j))return find_maxp(s,(1<<i)*j);
+        }
+      }
+    }
+  }
 };
 
 }//end of namespace
