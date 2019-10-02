@@ -1,3 +1,4 @@
+#include <iostream>
 #include <vector>
 #include <algorithm>
 #include <queue>
@@ -116,7 +117,7 @@ class SegmentTree{
 	}
 	void chnode(int th,int n){nodes[0][th].val=n;}
 
-	void print(){for(int i=0;i<rank;i++){for(int j=0;j<nodes[i].size();j++){std::cout<<nodes[i][j]<<"   ";}std::cout<<endl;}}
+	//void print(){for(int i=0;i<rank;i++){for(int j=0;j<nodes[i].size();j++){std::cout<<nodes[i][j]<<"   ";}std::cout<<endl;}}
 	int find_maxv(int s,int e){
 		//max{x | x in [s,e)}を返す
     if(s+1>e)return 0;
