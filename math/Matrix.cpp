@@ -3,12 +3,14 @@
 namespace ndifix{
 
 class Matrix{
-		public:
+		private:
 	int row, collumn;
+		public:
 	std::vector<std::vector<int>> data;
 		
 	Matrix(){row=collumn=2;data.resize(row);for(int i=0;i<row;i++)data[i].resize(collumn);}
 	Matrix(int r,int c){row=std::max(1,r);collumn=std::max(1,c);data.resize(row);for(int i=0;i<row;i++)data[i].resize(collumn);}
+	Matrix(int size){row=collumn=std::max(1,size);data.resize(size);for(int i=0;i<size;i++)data[i].resize(size);}
 	Matrix(std::vector<std::vector<int>> &v){if(v.size()==0){Matrix();return;}if(v[0].size()==0){Matrix();return;}data=v;row=data.size();collumn=data[0].size();}
 
 	void push_row(std::vector<int> v){if(v.size()==collumn)data.push_back(v);}
@@ -26,8 +28,8 @@ class Matrix{
 		return ret;}
 	void operator=(std::vector<std::vector<int>> v){data=v;row=v.size();if(row)collumn=v[0].size();}
 
-
 	friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
+	friend ndifix::Matrix tensor(ndifix::Matrix&, ndifix::Matrix&);
 };
 
 std::ostream& operator<<(std::ostream& os, const Matrix& m){
@@ -41,4 +43,20 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m){
 	return os;
 }
 
+ndifix::Matrix tensor(ndifix::Matrix &a, ndifix::Matrix &b){
+	ndifix::Matrix ret(a.row*b.row,a.collumn*b.collumn);
+
+	for(int ar=0;ar<a.row;ar++){
+	for(int ac=0;ac<a.collumn;ac++){
+		int m=a.data[ar][ac];
+		for(int br=0;br<b.collumn;br++){
+		for(int bc=0;bc<b.collumn;bc++){
+			ret.data[ar*a.row+br][ac*a.collumn+bc]=m*b.data[br][bc];
+		}}
+	}}
+	return ret;
 }
+
+
+
+}//end of namespace
