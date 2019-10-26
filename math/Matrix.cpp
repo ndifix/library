@@ -27,6 +27,7 @@ class Matrix{
 		for(int i=0;i<row;i++)for(int j=0;j<m.collumn;j++)for(int k=0;k<collumn;k++)ret.data[i][j]+=data[i][k]*m.data[k][j];
 		return ret;}
 	void operator=(std::vector<std::vector<int>> v){data=v;row=v.size();if(row)collumn=v[0].size();}
+	std::vector<int> &operator[](int r){if(0<=r && r<row)return data[r];}
 
 	friend std::ostream& operator<<(std::ostream& os, const Matrix& m);
 	friend ndifix::Matrix tensor(ndifix::Matrix&, ndifix::Matrix&);
@@ -42,10 +43,8 @@ std::ostream& operator<<(std::ostream& os, const Matrix& m){
 	}
 	return os;
 }
-
 ndifix::Matrix tensor(ndifix::Matrix &a, ndifix::Matrix &b){
 	ndifix::Matrix ret(a.row*b.row,a.collumn*b.collumn);
-
 	for(int ar=0;ar<a.row;ar++){
 	for(int ac=0;ac<a.collumn;ac++){
 		int m=a.data[ar][ac];
@@ -57,6 +56,40 @@ ndifix::Matrix tensor(ndifix::Matrix &a, ndifix::Matrix &b){
 	return ret;
 }
 
-
+class sqMatrix : Matrix{
+		private:
+	int size;
+		public:
+	sqMatrix(){size=3;data.resize(size);for(int i=0;i<size;i++)data[i].resize(size);}
+	sqMatrix(int s){size=s;data.resize(size);for(int i=0;i<size;i++)data[i].resize(size);}
+	sqMatrix(std::vector<std::vector<int>> &v){size=v.size();for(int i=0;i<size;i++)if(v[i].size()!=size){sqMatrix();return;}data=v;}
+	
+	friend std::ostream& operator<<(std::ostream& os, const sqMatrix& m);
+	friend ndifix::sqMatrix tensor(ndifix::sqMatrix&, ndifix::sqMatrix&);
+};
+std::ostream& operator<<(std::ostream& os, const sqMatrix& m){
+	for(int i=0;i<m.size;i++){
+		for(int j=0;j<m.size;j++){
+			os<<m.data[i][j];
+			if(j!=m.size-1)os<<"\t";
+			if(i!=m.size-1&&j==m.size-1)os<<"\n";
+		}
+	}
+	return os;
+}
+ndifix::sqMatrix tensor(ndifix::sqMatrix &a, ndifix::sqMatrix &b){
+	ndifix::sqMatrix ret(a.size*b.size);
+	for(int ar=0;ar<a.size;ar++){
+	for(int ac=0;ac<a.size;ac++){
+		int m=a.data[ar][ac];
+		for(int br=0;br<b.size;br++){
+		for(int bc=0;bc<b.size;bc++){
+			ret.data[ar*a.size+br][ac*a.size+bc]=m*b.data[br][bc];
+		}}
+	}}
+	return ret;
+}
 
 }//end of namespace
+
+
