@@ -16,55 +16,59 @@ class Matrix {
   }
 
  protected:
+  int DefaultSize = 2;
   std::vector<std::vector<T>> data;
 
  public:
   Matrix() {
-    row = collumn = 2;
+    row = collumn = DefaultSize;
     data.resize(row);
     for (int i = 0; i < row; i++) data[i].resize(collumn);
   }
   Matrix(int r, int c) {
-    row = std::max(1, r);
-    collumn = std::max(1, c);
+    if (r < 0 || c < 0) throw std::invalid_argument("行列のサイズが不正です。");
+    row = r;
+    collumn = c;
     data.resize(row);
     for (int i = 0; i < row; i++) data[i].resize(collumn);
   }
   Matrix(int size) {
-    row = collumn = std::max(1, size);
+    if (size < 0) throw std::invalid_argument("行列のサイズが不正です。");
+    row = collumn = size;
     data.resize(size);
     for (int i = 0; i < size; i++) data[i].resize(size);
   }
   Matrix(std::vector<std::vector<T>> &v) {
-    if (v.size() == 0) {
-      Matrix();
-      return;
-    }
-    if (v[0].size() == 0) {
-      Matrix();
-      return;
-    }
     data = v;
     row = data.size();
-    collumn = data[0].size();
+    row > 0 ? collumn = data[0].size() : collumn = 0;
+
+    for (auto d : data) {
+      if (d.size() != collumn) {
+        throw std::invalid_argument("行列になっていません。");
+      }
+    }
   }
 
   void operator+=(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn) return;
+    if (row != m.row || collumn != m.collumn)
+      throw std::invalid_argument("行列のサイズが異なります。");
     for (int i = 0; i < row; i++)
       for (int j = 0; j < collumn; j++) {
         data[i][j] += m.data[i][j];
       }
   }
   void operator-=(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn) return;
+    if (row != m.row || collumn != m.collumn)
+      throw std::invalid_argument("行列のサイズが異なります。");
     for (int i = 0; i < row; i++)
       for (int j = 0; j < collumn; j++) {
         data[i][j] -= m.data[i][j];
       }
   }
   Matrix<T> operator+(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn) return *this;
+    if (row != m.row || collumn != m.collumn)
+      throw std::invalid_argument("行列のサイズが異なります。");
     Matrix<T> ret = (*this);
     for (int i = 0; i < row; i++)
       for (int j = 0; j < collumn; j++) {
@@ -73,7 +77,8 @@ class Matrix {
     return ret;
   }
   Matrix<T> operator-(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn) return *this;
+    if (row != m.row || collumn != m.collumn)
+      throw std::invalid_argument("行列のサイズが異なります。");
     Matrix<T> ret = (*this);
     for (int i = 0; i < row; i++)
       for (int j = 0; j < collumn; j++) {
@@ -82,7 +87,8 @@ class Matrix {
     return ret;
   }
   void operator*=(Matrix<T> m) {
-    if (collumn != m.row) return;
+    if (collumn != m.row)
+      throw std::invalid_argument("行列のサイズが異なります。");
     Matrix<T> ret(row, m.collumn);
     for (int i = 0; i < row; i++)
       for (int j = 0; j < m.collumn; j++)
@@ -94,7 +100,8 @@ class Matrix {
     collumn = ret.collumn;
   }
   Matrix<T> operator*(Matrix<T> m) {
-    if (collumn != m.row) return *this;
+    if (collumn != m.row)
+      throw std::invalid_argument("行列のサイズが異なります。");
     Matrix<T> ret(row, m.collumn);
     for (int i = 0; i < row; i++)
       for (int j = 0; j < m.collumn; j++)
@@ -151,22 +158,23 @@ class sqMatrix : public Matrix<T> {
 
  public:
   sqMatrix() {
-    size = 3;
+    size = this->DefaultSize;
     this->data.resize(size);
     for (int i = 0; i < size; i++) this->data[i].resize(size);
   }
   sqMatrix(int s) {
+    if (s < 0) throw std::invalid_argument("行列のサイズが負になっています。");
     size = s;
     this->data.resize(size);
     for (int i = 0; i < size; i++) this->data[i].resize(size);
   }
   sqMatrix(std::vector<std::vector<T>> &v) {
     size = v.size();
-    for (int i = 0; i < size; i++)
+    for (int i = 0; i < size; i++) {
       if (v[i].size() != size) {
-        sqMatrix();
-        return;
+        throw std::invalid_argument("正方行列になっていません。");
       }
+    }
     this->data = v;
   }
 
