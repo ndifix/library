@@ -56,72 +56,63 @@ class Matrix {
 
 #pragma region Operators
 
-  void operator+=(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn)
-      throw std::invalid_argument("行列のサイズが異なります。");
-    for (int i = 0; i < row; i++)
-      for (int j = 0; j < collumn; j++) {
-        data[i][j] += m.data[i][j];
-      }
-  }
-  void operator-=(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn)
-      throw std::invalid_argument("行列のサイズが異なります。");
-    for (int i = 0; i < row; i++)
-      for (int j = 0; j < collumn; j++) {
-        data[i][j] -= m.data[i][j];
-      }
-  }
   Matrix<T> operator+(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn)
+    if (row != m.row || collumn != m.collumn) {
       throw std::invalid_argument("行列のサイズが異なります。");
-    Matrix<T> ret = (*this);
-    for (int i = 0; i < row; i++)
+    }
+    Matrix<T> ret = *this;
+    for (int i = 0; i < row; i++) {
       for (int j = 0; j < collumn; j++) {
         ret.data[i][j] += m.data[i][j];
       }
+    }
     return ret;
   }
+
   Matrix<T> operator-(Matrix<T> m) {
-    if (row != m.row || collumn != m.collumn)
-      throw std::invalid_argument("行列のサイズが異なります。");
-    Matrix<T> ret = (*this);
-    for (int i = 0; i < row; i++)
-      for (int j = 0; j < collumn; j++) {
-        ret.data[i][j] -= m.data[i][j];
-      }
-    return ret;
+    m *= -1;
+    return operator+(m);
   }
-  void operator*=(Matrix<T> m) {
-    if (collumn != m.row)
-      throw std::invalid_argument("行列のサイズが異なります。");
+
+  Matrix<T> operator*(Matrix<T> m) {
+    if (collumn != m.row) {
+      throw std::invalid_argument("積を定義できないサイズです。");
+    }
     Matrix<T> ret(row, m.collumn);
-    for (int i = 0; i < row; i++)
-      for (int j = 0; j < m.collumn; j++)
+    for (int i = 0; i < row; i++) {
+      for (int j = 0; j < m.collumn; j++) {
         for (int k = 0; k < collumn; k++) {
           ret.data[i][j] += data[i][k] * m.data[k][j];
         }
-    data = ret.data;
-    row = ret.row;
-    collumn = ret.collumn;
-  }
-  Matrix<T> operator*(Matrix<T> m) {
-    if (collumn != m.row)
-      throw std::invalid_argument("行列のサイズが異なります。");
-    Matrix<T> ret(row, m.collumn);
-    for (int i = 0; i < row; i++)
-      for (int j = 0; j < m.collumn; j++)
-        for (int k = 0; k < collumn; k++)
-          ret.data[i][j] += data[i][k] * m.data[k][j];
+      }
+    }
     return ret;
   }
-  void operator=(std::vector<std::vector<T>> v) {
-    data = v;
-    row = v.size();
-    if (row) collumn = v[0].size();
+
+  Matrix<T> operator*(int scalar) {
+    Matrix<T> ret = *this;
+    for (auto &i : ret.data) {
+      for (auto &j : i) {
+        j *= scalar;
+      }
+    }
+    return ret;
   }
+
+  void operator+=(Matrix<T> m) { *this = operator+(m); }
+
+  void operator-=(Matrix<T> m) { *this = operator-(m); }
+
+  void operator*=(Matrix<T> m) { *this = operator*(m); }
+
+  void operator*=(int scalar) { *this = operator*(scalar); }
+
   std::vector<T> &operator[](int r) {
-    if (0 <= r && r < row) return data[r];
+    if (0 <= r && r < row) {
+      return data[r];
+    } else {
+      throw std::invalid_argument("Segmentaion Fault");
+    }
   }
 
   template <typename U>
