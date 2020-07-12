@@ -20,6 +20,8 @@ class Matrix {
   std::vector<std::vector<T>> data;
 
  public:
+#pragma region Constructors
+
   Matrix() {
     row = collumn = DefaultSize;
     data.resize(row);
@@ -49,6 +51,10 @@ class Matrix {
       }
     }
   }
+
+#pragma endregion
+
+#pragma region Operators
 
   void operator+=(Matrix<T> m) {
     if (row != m.row || collumn != m.collumn)
@@ -120,8 +126,15 @@ class Matrix {
 
   template <typename U>
   friend std::ostream &operator<<(std::ostream &os, const Matrix<U> &m);
+
+#pragma endregion
+
+#pragma region Methods
+
   template <typename U>
   friend Matrix<U> kronecker(Matrix<U> &, Matrix<U> &);
+
+#pragma endregion
 };  // end of Matrix
 
 template <class T>
@@ -157,6 +170,8 @@ class sqMatrix : public Matrix<T> {
   int size;
 
  public:
+#pragma region Constructors
+
   sqMatrix() {
     size = this->DefaultSize;
     this->data.resize(size);
@@ -178,12 +193,18 @@ class sqMatrix : public Matrix<T> {
     this->data = v;
   }
 
+#pragma endregion
+
+#pragma region Methods
+
   T det() {}
   sqMatrix invert() {}
   template <typename U>
   friend std::ostream &operator<<(std::ostream &os, const sqMatrix<U> &m);
   template <typename U>
   friend sqMatrix<U> tensor(sqMatrix<U> &, sqMatrix<U> &);
+
+#pragma endregion
 };  // end of sqMatrix
 
 template <typename U>
