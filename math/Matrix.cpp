@@ -122,7 +122,31 @@ class Matrix {
 
   bool isSquare() { return row == collumn; }
 
-  T det() {}
+  T det() {
+    if (!isSquare()) {
+      throw std::invalid_argument("正方行列ではありません。");
+    }
+    if (row == 1 && collumn == 1) {
+      return data[0][0];
+    }
+    T ret = 0;
+    for (int i = 0; i < row; i++) {
+      ret += data[i][0] * cofactor(i, 0);
+    }
+
+    return ret;
+  }
+
+  T cofactor(int i, int j) {
+    Matrix<T> ret = *this;
+    ret.data.erase(ret.data.begin() + i);
+    ret.row--;
+    for (int k = 0; k < ret.row; k++) {
+      ret.data[k].erase(ret.data[k].begin() + j);
+    }
+    ret.collumn--;
+    return (i + j) % 2 == 0 ? ret.det() : ret.det() * -1;
+  }
 
   Matrix<T> invert() {}
 
