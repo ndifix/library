@@ -75,4 +75,26 @@ void LeapFrogSteps(double (*f)(double), double x0, double t0 = 0) {
     std::cout << t + dt << "\t" << x3 << "\t" << f(t + dt) << std::endl;
   }
 }
+
+// 4次のRunge-Kutta法による積分を行う。
+// v = dx/dt = f(t, x) : f is given のときの t, x(t), v(t, x)を出力する。
+// x0 は x(t0=0) の値。
+// 試行回数を N に定める。
+void RungeKuttaSteps(double (*f)(double, double), double x0, double t0 = 0) {
+  double t, x = x0;
+  double k1, k2, k3, k4;
+  double dt = 0.01;
+  int N = 10;
+
+  for (int times = 0; times < N; times++) {
+    t = t0 + dt * times;
+    std::cout << t << "\t" << x << "\t" << f(t, x) << std::endl;
+
+    k1 = f(t, x);
+    k2 = f(t + dt / 2, x + dt * k1 / 2);
+    k3 = f(t + dt / 2, x + dt * k2 / 2);
+    k4 = f(t + dt, x + dt * k3);
+    x += dt * (k1 + 2 * k2 + 2 * k3 + k4) / 6;
+  }
+}
 }  // namespace ndifix
