@@ -1,11 +1,5 @@
 #include <cmath>
 namespace ndifix {
-struct phase {
-  double x[3];  // x, vx, ax
-  double y[3];
-
-  double E() { return hypot(x[1], y[1]) / 2.0; }
-};
 
 // Euler法による積分を行う
 // v = dx/dt = f(t) : f is given のときの t, x(t), v(t)を出力する。
