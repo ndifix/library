@@ -1,14 +1,16 @@
 #include <cmath>
 namespace ndifix {
 
-// Euler法による積分を行う
+// Euler法による積分を行う。
 // v = dx/dt = f(t) : f is given のときの t, x(t), v(t)を出力する。
-// x0 は x(t0=0) の値
+// x0 は x(t0=0) の値。
+// 試行回数を N に定める。
 void EulerSteps(double (*f)(double), double x0, double t0 = 0) {
   double t, x = x0;
   double dt = 0.01;
+  int N = 10;
 
-  for (int times = 0; times < 10; times++) {
+  for (int times = 0; times < N; times++) {
     t = t0 + dt * times;
     std::cout << t << "\t" << x << "\t" << f(t) << std::endl;
 
@@ -16,9 +18,30 @@ void EulerSteps(double (*f)(double), double x0, double t0 = 0) {
   }
 }
 
-// Leap-Frog法による積分を行う
+// Heun法による積分を行う。
 // v = dx/dt = f(t) : f is given のときの t, x(t), v(t)を出力する。
-// x0 は x(t0=0) の値
+// x0 は x(t0=0) の値。
+void HeunSteps(double (*f)(double), double x0, double t0 = 0) {
+  /*
+  x(t+dt) = x(t) + dt m
+  m = { f(t) + f(t+dt) } / 2
+  */
+  double t, x = x0;
+  double dt = 0.01;
+  int N = 10;
+
+  for (int times = 0; times < N; times++) {
+    t = t0 + dt * times;
+    std::cout << t << "\t" << x << "\t" << f(t) << std::endl;
+
+    x += (f(t) + f(t + dt)) / 2.0 * dt;
+  }
+}
+
+// Leap-Frog法による積分を行う。
+// v = dx/dt = f(t) : f is given のときの t, x(t), v(t)を出力する。
+// x0 は x(t0=0) の値。
+// 試行回数を N に定める。
 void LeapFrogSteps(double (*f)(double), double x0, double t0 = 0) {
   /*
   F(t+dt) = F(t) + dtf(t) + dt^2...
@@ -32,6 +55,7 @@ void LeapFrogSteps(double (*f)(double), double x0, double t0 = 0) {
   */
   double t, x1, x2, x3;
   double dt = 0.01;
+  int N = 10;
 
   t = t0 + dt;
 
@@ -42,7 +66,7 @@ void LeapFrogSteps(double (*f)(double), double x0, double t0 = 0) {
   x3 = x1 + 2 * dt * f(t);
   std::cout << t + dt << "\t" << x3 << "\t" << f(t + dt) << std::endl;
 
-  for (int times = 2; times < 10; times++) {
+  for (int times = 2; times < N; times++) {
     t = t0 + dt * times;
 
     x1 = x2;
