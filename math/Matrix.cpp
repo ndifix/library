@@ -105,6 +105,21 @@ class Matrix {
 
   void operator*=(int scalar) { *this = operator*(scalar); }
 
+  Matrix<T> operator^(Matrix<T> ma) {
+    Matrix<T> ret(row * ma.row, collumn * ma.collumn);
+    for (int ar = 0; ar < row; ar++) {
+      for (int ac = 0; ac < collumn; ac++) {
+        int m = data[ar][ac];
+        for (int br = 0; br < ma.collumn; br++) {
+          for (int bc = 0; bc < ma.collumn; bc++) {
+            ret.data[ar * row + br][ac * collumn + bc] = m * ma.data[br][bc];
+          }
+        }
+      }
+    }
+    return ret;
+  }
+
   std::vector<T> &operator[](int r) {
     if (0 <= r && r < row) {
       return data[r];
@@ -150,9 +165,6 @@ class Matrix {
 
   Matrix<T> invert() {}
 
-  template <typename U>
-  friend Matrix<U> kronecker(Matrix<U> &, Matrix<U> &);
-
 #pragma endregion
 };  // end of Matrix
 
@@ -166,22 +178,6 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &m) {
     }
   }
   return os;
-}
-
-template <class T>
-Matrix<T> kronecker(Matrix<T> &a, Matrix<T> &b) {
-  ndifix::Matrix<T> ret(a.row * b.row, a.collumn * b.collumn);
-  for (int ar = 0; ar < a.row; ar++) {
-    for (int ac = 0; ac < a.collumn; ac++) {
-      int m = a.data[ar][ac];
-      for (int br = 0; br < b.collumn; br++) {
-        for (int bc = 0; bc < b.collumn; bc++) {
-          ret.data[ar * a.row + br][ac * a.collumn + bc] = m * b.data[br][bc];
-        }
-      }
-    }
-  }
-  return ret;
 }
 
 }  // namespace ndifix
