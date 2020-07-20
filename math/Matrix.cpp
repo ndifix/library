@@ -154,6 +154,14 @@ class Matrix {
 
 #pragma endregion
 
+#pragma region Properties
+
+  int Row() { return row; }
+
+  int Collumn() { return collumn; }
+
+#pragma endregion
+
 #pragma region Methods
 
   bool isSquare() { return row == collumn; }
@@ -272,6 +280,12 @@ class Vector {
 
   template <typename U>
   friend std::ostream &operator<<(std::ostream &os, const Vector<U> &v);
+
+#pragma endregion
+
+#pragma region Properties
+
+  int Deg() { return degree; }
 
 #pragma endregion
 };
