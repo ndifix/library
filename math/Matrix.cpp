@@ -180,4 +180,84 @@ std::ostream &operator<<(std::ostream &os, const Matrix<T> &m) {
   return os;
 }
 
+template <class T>
+class Vector {
+ private:
+  int degree;
+  std::vector<T> data;
+
+ public:
+#pragma region Constructors
+
+  Vector(int d) {
+    degree = d;
+    data.resize(degree);
+  }
+
+  Vector(std::vector<T> &v) {
+    degree = v.size();
+    data = v;
+  }
+
+#pragma endregion
+
+#pragma region Operators
+
+  Vector<T> operator+(Vector<T> v) {
+    if (degree != v.degree) {
+      throw std::invalid_argument("ベクトルの次数が異なります。");
+    }
+    Vector<T> ret = *this;
+    for (int i = 0; i < ret.degree; i++) {
+      ret[i] += v[i];
+    }
+    return ret;
+  }
+
+  Vector<T> operator-(Vector<T> v) { return operator+(v * -1); }
+
+  Vector<T> operator*(int scalar) {
+    Vector<T> ret = *this;
+    for (int i = 0; i < ret.degree; i++) {
+      ret[i] *= scalar;
+    }
+    return ret;
+  }
+
+  template <class U>
+  friend Vector<U> operator*(int scalar, Vector<U> v);
+
+  void operator+=(Vector<T> v) { *this = operator+(v); }
+
+  void operator-=(Vector<T> v) { *this = operator-(v); }
+
+  void operator*=(int scalar) { *this = operator*(scalar); }
+
+  T &operator[](int i) {
+    if (i < 0 || i >= degree) {
+      throw std::invalid_argument("Segmentaion Fault");
+    }
+    return data[i];
+  }
+
+  template <typename U>
+  friend std::ostream &operator<<(std::ostream &os, const Vector<U> &v);
+
+#pragma endregion
+};
+
+template <class U>
+Vector<U> operator*(int scalar, Vector<U> v) {
+  return v.operator*(scalar);
+}
+
+template <typename U>
+std::ostream &operator<<(std::ostream &os, const Vector<U> &v) {
+  for (int i = 0; i < v.degree; i++) {
+    os << v.data[i] << (i != v.degree - 1 ? "\t" : "");
+  }
+
+  return os;
+}
+
 }  // namespace ndifix
