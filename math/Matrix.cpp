@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
 namespace ndifix {
+template <class T>
+class Matrix;
+template <class T>
+class Vector;
 
 template <class T>
 class Matrix {
@@ -120,6 +124,20 @@ class Matrix {
     return ret;
   }
 
+  operator Vector<T>() {
+    std::vector<T> v(row);
+    for (int i = 0; i < row; i++) {
+      v[i] = data[i][0];
+    }
+
+    Vector<T> ret(v);
+    return ret;
+  }
+
+  Vector<T> operator*(Vector<T> v) {
+    return (Vector<T>)operator*((Matrix<T>)v);
+  }
+
   std::vector<T> &operator[](int r) {
     if (0 <= r && r < row) {
       return data[r];
@@ -232,6 +250,15 @@ class Vector {
   void operator-=(Vector<T> v) { *this = operator-(v); }
 
   void operator*=(int scalar) { *this = operator*(scalar); }
+
+  operator Matrix<T>() {
+    std::vector<std::vector<T>> v(degree, std::vector<T>(1));
+    for (int i = 0; i < degree; i++) {
+      v[i][0] = data[i];
+    }
+    Matrix<T> ret(v);
+    return ret;
+  }
 
   T &operator[](int i) {
     if (i < 0 || i >= degree) {
