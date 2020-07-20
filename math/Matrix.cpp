@@ -1,3 +1,6 @@
+#ifndef NDIFIX_MATRIX
+#define NDIFIX_MATRIX
+
 #include <iostream>
 #include <vector>
 namespace ndifix {
@@ -288,3 +291,5 @@ std::ostream &operator<<(std::ostream &os, const Vector<U> &v) {
 }
 
 }  // namespace ndifix
+
+#endif
