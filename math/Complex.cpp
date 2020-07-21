@@ -1,3 +1,6 @@
+#ifndef NDIFIX_COMPLEX
+#define NDIFIX_COMPLEX
+
 #include <iostream>
 
 namespace ndifix {
@@ -81,3 +84,5 @@ std::ostream &operator<<(std::ostream &os, const Complex &c) {
 }
 
 }  // namespace ndifix
+
+#endif
