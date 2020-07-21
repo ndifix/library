@@ -26,16 +26,16 @@ class Complex {
 
 #pragma region Operator
 
-  Complex operator+(const Complex &c) {
+  Complex operator+(Complex c) {
     Complex ret = *this;
     ret.Re += c.Re;
     ret.Im += c.Im;
     return ret;
   }
 
-  Complex operator-(Complex &c) { return operator+(c * -1); }
+  Complex operator-(Complex c) { return operator+(c * -1); }
 
-  Complex operator*(Complex &c) {
+  Complex operator*(Complex c) {
     Complex ret;
     ret.Re = this->Re * c.Re - this->Im * c.Im;
     ret.Im = this->Re * c.Im + this->Im * c.Re;
@@ -49,11 +49,11 @@ class Complex {
     return ret;
   }
 
-  void operator+=(Complex &c) { *this = operator+(c); }
+  void operator+=(Complex c) { *this = operator+(c); }
 
-  void operator-=(Complex &c) { *this = operator-(c); }
+  void operator-=(Complex c) { *this = operator-(c); }
 
-  void operator*=(Complex &c) { *this = operator*(c); }
+  void operator*=(Complex c) { *this = operator*(c); }
 
   void operator*=(double r) { *this = operator*(r); }
 
