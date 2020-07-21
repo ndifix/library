@@ -46,4 +46,47 @@ Rmatrix LDU_U(Rmatrix &m) {
   return ret;
 }
 
+// Jacobi法を用いて Ax=b を解きます。
+Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
+  if (!A.isSquare() || A.Row() != b.Deg()) {
+    throw std::invalid_argument("行列またはベクトルのサイズが不正です。");
+  }
+  for (int i = 0; i < A.Row(); i++) {
+    if (A[i][i] == 0) {
+      throw std::invalid_argument(
+          "対角成分に0が含まれているためJacobi法を使えません。");
+    }
+  }
+  /*
+  (L + D + U)x = b
+  Dx = b - (L + U)x
+  Dx_(n+1) = b - (L + U)x_n
+
+  || x_(n+1) - x_n || < dx のときに終了する
+  */
+  Rvector current = b, next;
+  Rmatrix L, D, U, D_inv;
+
+  L = LDU_L(A);
+  D = LDU_D(A);
+  U = LDU_U(A);
+  D_inv = D;
+  for (int i = 0; i < D.Row(); i++) {
+    D_inv[i][i] = 1 / D[i][i];
+  }
+
+  for (int i = 0; i < 100; i++) {
+    next = D_inv * (b - (L + U) * current);
+
+    // ベクトルの差を検証
+    Rvector diff;
+    diff = next - current;
+    if (diff.Norm() < dx) {
+      return next;
+    }
+
+    current = next;
+  }
+}
+
 }  // namespace ndifix
