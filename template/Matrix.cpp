@@ -155,6 +155,8 @@ class basic_Matrix {
 
   int Collumn() { return collumn; }
 
+  std::vector<std::vector<T>> Data() { return data; };
+
 #pragma endregion
 
 #pragma region Methods
@@ -279,6 +281,8 @@ class basic_Vector {
 #pragma region Properties
 
   int Deg() { return degree; }
+
+  std::vector<T> Data() { return data; };
 
 #pragma endregion
 };
