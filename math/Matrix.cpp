@@ -64,6 +64,18 @@ class Rmatrix : public basic_Matrix<double> {
     return *this;
   }
 
+  basic_Vector<double> operator*(basic_Vector<double> v) {
+    basic_Matrix<double> rm = *this;
+    return rm.operator*(v);
+  }
+
+  basic_Matrix<double> operator*(basic_Matrix<double> m) {
+    basic_Matrix<double> rm = *this;
+    return rm.operator*(m);
+  }
+
+  void operator*=(basic_Matrix<double> m) { *this = operator*(m); }
+
   basic_Vector<Complex> operator*(Cvector v) {
     Cmatrix cm = *this;
     return cm.operator*(v);
