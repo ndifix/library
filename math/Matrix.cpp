@@ -3,6 +3,7 @@
 
 #include "../template/Matrix.cpp"
 
+#include <cmath>
 #include <iostream>
 #include <vector>
 
@@ -33,6 +34,22 @@ class Cvector : public basic_Vector<Complex> {
     this->data = m.Data();
     return *this;
   }
+
+  // 標準エルミート内積を返します。
+  Complex dotP(Cvector cv) {
+    if (this->degree != cv.degree) {
+      std::invalid_argument("ベクトルの次数が異なります");
+    }
+    Complex ret = 0;
+    for (int i = 0; i < this->degree; i++) {
+      ret += this->data[i] * (cv.data[i].cc());
+    }
+
+    return ret;
+  }
+
+  // 2ノルムを返します
+  double Norm() { return std::sqrt(dotP(*this).Re); }
 };
 
 // 実行列を表します。
@@ -67,6 +84,22 @@ class Rvector : public basic_Vector<double> {
     this->data = m.Data();
     return *this;
   }
+
+  // 標準エルミート内積を返します。
+  double dotP(Rvector rv) {
+    if (this->degree != rv.degree) {
+      std::invalid_argument("ベクトルの次数が異なります");
+    }
+    double ret = 0;
+    for (int i = 0; i < this->degree; i++) {
+      ret += this->data[i] * rv.data[i];
+    }
+
+    return ret;
+  }
+
+  // 2ノルムを返します。
+  double Norm() { return std::sqrt(dotP(*this)); }
 };
 
 }  // namespace ndifix
