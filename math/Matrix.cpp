@@ -64,6 +64,16 @@ class Rmatrix : public basic_Matrix<double> {
     return *this;
   }
 
+  basic_Vector<Complex> operator*(Cvector v) {
+    Cmatrix cm = *this;
+    return cm.operator*(v);
+  }
+
+  basic_Matrix<Complex> operator*(Cmatrix m) {
+    Cmatrix cm = *this;
+    return cm.operator*(m);
+  }
+
   operator Cmatrix() {
     Cmatrix ret(this->row, this->collumn);
     for (int i = 0; i < this->row; i++) {
@@ -71,6 +81,7 @@ class Rmatrix : public basic_Matrix<double> {
         ret[i][j] = Complex(this->data[i][j]);
       }
     }
+    return ret;
   }
 };
 
@@ -83,6 +94,14 @@ class Rvector : public basic_Vector<double> {
     this->degree = m.Deg();
     this->data = m.Data();
     return *this;
+  }
+
+  operator Cvector() {
+    Cvector ret(this->degree);
+    for (int i = 0; i < this->degree; i++) {
+      ret[i] = Complex(this->data[i]);
+    }
+    return ret;
   }
 
   // 標準エルミート内積を返します。
