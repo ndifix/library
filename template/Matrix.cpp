@@ -213,6 +213,8 @@ class basic_Vector {
  public:
 #pragma region Constructors
 
+  basic_Vector() {}
+
   basic_Vector(int d) {
     degree = d;
     data.resize(degree);
