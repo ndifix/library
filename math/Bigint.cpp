@@ -84,15 +84,16 @@ class Bigint {
 #pragma region Operators
 
   Bigint operator+(Bigint B) {
-    Bigint ret = (*this);
-    if (ret.size() < B.size()) ret.resize(B.size());
-    for (int i = 0; i < (ret.size() < B.size() ? ret.size() : B.size()); i++)
-      ret[i] += B[i];
+    Bigint ret = (*this > B ? *this : B);
+    Bigint arg = (*this < B ? *this : B);
+    for (int i = 0; i < std::min(ret.size(), B.size()); i++) {
+      ret[i] += arg[i];
+    }
     ret.modify();
     return ret;
   }
 
-  Bigint operator-(Bigint &B) {
+  Bigint operator-(Bigint B) {
     Bigint ret(0);
     if (*this < B) {
       return ret;
@@ -105,7 +106,7 @@ class Bigint {
     return ret;
   }
 
-  Bigint operator*(Bigint &B) {
+  Bigint operator*(Bigint B) {
     Bigint ret(0);
     int s = size();
     Bigint buf;
@@ -124,68 +125,11 @@ class Bigint {
     return ret;
   }
 
-  void operator+=(Bigint &B);
-  // { *this = operator+(B); }
+  void operator+=(Bigint B) { *this = operator+(B); }
 
-  void operator*=(Bigint &B);
-  // { (*this) = operator*(B); }
+  void operator-=(Bigint B) { *this = operator-(B); }
 
-  Bigint operator+(int n);
-  // { return *this + Bigint(n); }
-
-  Bigint operator-(int n);
-  // { return operator+(n * -1); }
-
-  void operator+=(int n);
-  // { *this += Bigint(n); }
-
-  Bigint operator*(int n) {
-    Bigint B(n);
-    return B * (*this);
-  }
-
-  void operator*=(int n) {
-    Bigint B(n);
-    (*this) = (*this) * B;
-  }
-
-  Bigint operator/(int n);
-
-  int operator%(int n) {
-    Bigint ret = *this, buf;
-    long long tmp = 1, tmp2;
-    while (ret >= n) {
-      buf = 0;
-      for (int i = 0; i < ret.size(); i++) {
-        tmp2 = ret[i] * tmp;
-        tmp2 %= n;
-        buf += tmp2;
-        tmp *= mod;
-        tmp %= n;
-      }
-      ret = buf;
-    }
-    return ret.num[0];
-  }
-
-  void operator%=(int n) {
-    Bigint ret = *this, buf;
-    long long tmp = 1, tmp2;
-    while (ret >= n) {
-      buf = 0;
-      for (int i = 0; i < ret.size(); i++) {
-        tmp2 = ret[i] * tmp;
-        tmp2 %= n;
-        buf += tmp2;
-        tmp *= mod;
-        tmp %= n;
-      }
-      ret = buf;
-    }
-    (*this) = ret;
-  }
-
-  Bigint operator/(Bigint &B);
+  void operator*=(Bigint B) { *this = operator*(B); }
 
   Bigint operator<<(int i) {
     Bigint ret = (*this);
