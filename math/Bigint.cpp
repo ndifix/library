@@ -12,6 +12,43 @@ class Bigint {
   const int mod = 10000;
   const int intmax = 1e8;
   const int modd = 4;  // 10^4
+
+#pragma region PrivateMethods
+
+  void shrink() {
+    while (num.size() >= 2 && num.back() == 0) {
+      num.pop_back();
+    }
+  }
+
+  void modify() {
+    shrink();
+    int tmp;
+    for (int i = 0; i < num.size() - 1; i++) {
+      if (num[i] < 0) {
+        tmp = (-1) * num[i];
+        tmp += (tmp / mod) + !!(tmp % mod);
+        num[i + 1] -= tmp;
+        num[i] += tmp * mod;
+      }
+    }
+    if (num.back() == 0) {
+      num.resize(1);
+      num[0] = 0;
+    }
+    shrink();
+    num.resize(num.size() + 1);
+    for (int i = 0; i < num.size() - 1; i++) {
+      if (num[i] >= mod) {
+        num[i + 1] += (num[i] / mod);
+        num[i] = num[i] % mod;
+      }
+    }
+    shrink();
+  }
+
+#pragma endregion
+
  public:
 #pragma region Constructor
 
@@ -110,10 +147,10 @@ class Bigint {
     Bigint ret(0);
     int s = size();
     Bigint buf;
-    buf.resize(s);
+    buf.num.resize(s);
     for (int i = 0; i < B.size(); i++) {
-      buf.resize(0);
-      buf.resize(s);
+      buf.num.resize(0);
+      buf.num.resize(s);
       for (int j = 0; j < s; j++) {
         buf.num[j] = B[i] * num[j];
       }
@@ -147,58 +184,14 @@ class Bigint {
   }
 
   int &operator[](int i) { return num[i]; }
-  std::string to_str() {
-    std::string ret, buf_s;
-    int buf = num[num.size() - 1];
-    ret += std::to_string(buf);
-    for (int i = num.size() - 2; i >= 0; i--) {
-      buf = num[i];
-      buf_s = std::to_string(buf);
-      while (buf_s.size() != modd) buf_s.insert(buf_s.begin(), '0');
-      ret += buf_s;
-      buf_s.clear();
-    }
-    return ret;
-  }
 
   friend std::ostream &operator<<(std::ostream &os, const Bigint &B);
 
 #pragma endregion
 
 #pragma region Methods
-  int size() { return int(num.size()); }
 
-  void resize(int size) { num.resize(size); }
-
-  void shrink() {
-    while (num.size() >= 2 && num.back() == 0) num.pop_back();
-  }
-
-  void modify() {
-    shrink();
-    int tmp;
-    for (int i = 0; i < num.size() - 1; i++) {
-      if (num[i] < 0) {
-        tmp = (-1) * num[i];
-        tmp += (tmp / mod) + !!(tmp % mod);
-        num[i + 1] -= tmp;
-        num[i] += tmp * mod;
-      }
-    }
-    if (num.back() == 0) {
-      num.resize(1);
-      num[0] = 0;
-    }
-    shrink();
-    num.resize(num.size() + 1);
-    for (int i = 0; i < num.size() - 1; i++) {
-      if (num[i] >= mod) {
-        num[i + 1] += (num[i] / mod);
-        num[i] = num[i] % mod;
-      }
-    }
-    shrink();
-  }
+  int size() { return (int)num.size(); }
 
   std::string toString() {
     std::stringstream ss;
