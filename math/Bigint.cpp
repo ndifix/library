@@ -197,10 +197,10 @@ class Bigint {
     for (int j = 0; j < i; j++) num.insert(num.begin(), 0);
   }
 
-  Bigint operator=(Bigint &B) { *this = B; }
-
-  void operator=(int n);
-  // { *this = Bigint(n); }
+  Bigint operator=(Bigint B) {
+    num = B.num;
+    return *this;
+  }
 
   int &operator[](int i) { return num[i]; }
   std::string to_str() {
