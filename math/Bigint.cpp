@@ -217,7 +217,7 @@ class Bigint {
     return ret;
   }
 
-  friend std::ostream &operator<<(std::ostream &os, Bigint &B);
+  friend std::ostream &operator<<(std::ostream &os, const Bigint &B);
 
 #pragma endregion
 
@@ -258,8 +258,15 @@ class Bigint {
 
   std::string toString() {
     std::stringstream ss;
-    for (auto itr = num.rbegin(); itr != num.rend(); itr--) {
-      ss << *itr;
+    for (int i = num.size() - 1; i >= 0; i--) {
+      if (i == num.size() - 1) {
+        ss << num[i];
+        continue;
+      }
+      if (num[i] < 10) ss << 0;
+      if (num[i] < 100) ss << 0;
+      if (num[i] < 1000) ss << 0;
+      ss << num[i];
     }
 
     return ss.str();
@@ -268,8 +275,17 @@ class Bigint {
 #pragma endregion
 };  // end of Bigint
 
-std::ostream &operator<<(std::ostream &os, Bigint &B) {
-  os << B.toString();
+std::ostream &operator<<(std::ostream &os, const Bigint &B) {
+  for (int i = B.num.size() - 1; i >= 0; i--) {
+    if (i == B.num.size() - 1) {
+      os << B.num[i];
+      continue;
+    }
+    if (B.num[i] < 10) os << 0;
+    if (B.num[i] < 100) os << 0;
+    if (B.num[i] < 1000) os << 0;
+    os << B.num[i];
+  }
   return os;
 }
 
