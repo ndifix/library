@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -34,53 +35,53 @@ class Bigint {
 
 #pragma endregion
 
-#pragma region Operators
+#pragma region BooleanOperators
 
-  bool operator<(int n) {
-    if (size() >= 2) return false;
-    return num[0] < n;
-  }
-
-  bool operator<(Bigint &B) {
-    if (size() < B.size()) return true;
-    for (int i = size() - 1; i >= 0; i--)
-      if (num[i] != B[i]) return num[i] < B[i];
+  bool operator<(Bigint B) {
+    if (size() != B.size()) {
+      return size() < B.size();
+    }
+    for (int i = size() - 1; i >= 0; i--) {
+      if (num[i] != B[i]) {
+        return num[i] < B[i];
+      }
+    }
     return false;
   }
 
-  bool operator>(int n) {
-    if (size() >= 2) return true;
-    return num[0] > n;
-  }
-
-  bool operator>(Bigint &B) {
-    if (size() > B.size()) return true;
-    for (int i = size() - 1; i >= 0; i--)
-      if (num[i] != B[i]) return num[i] > B[i];
+  bool operator>(Bigint B) {
+    if (size() != B.size()) {
+      return size() > B.size();
+    }
+    for (int i = size() - 1; i >= 0; i--) {
+      if (num[i] != B[i]) {
+        return num[i] > B[i];
+      }
+    }
     return false;
   }
 
-  bool operator==(int n) {
-    if (size() >= 2) return false;
-    return num[0] == n;
-  }
-
-  bool operator==(Bigint &B) {
-    if (size() != B.size()) return false;
-    for (int i = size() - 1; i >= 0; i--)
-      if (num[i] != B[i]) return false;
+  bool operator==(Bigint B) {
+    if (size() != B.size()) {
+      return false;
+    }
+    for (int i = size() - 1; i >= 0; i--) {
+      if (num[i] != B[i]) {
+        return false;
+      }
+    }
     return true;
   }
 
-  template <class T>
-  bool operator<=(T n) {
-    return (*this) < n || (*this) == n;
-  }
+  bool operator<=(Bigint B) { return !operator>(B); }
 
-  template <class T>
-  bool operator>=(T n) {
-    return (*this) > n || (*this) == n;
-  }
+  bool operator>=(Bigint B) { return !operator<(B); }
+
+  bool operator!=(Bigint B) { return !operator==(B); }
+
+#pragma endregion
+
+#pragma region Operators
 
   Bigint operator+(Bigint B) {
     Bigint ret = (*this);
