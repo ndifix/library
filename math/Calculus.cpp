@@ -111,13 +111,13 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
   L = LDU_L(A);
   D = LDU_D(A);
   U = LDU_U(A);
-  D_inv = D;
-  for (int i = 0; i < D.Row(); i++) {
-    D_inv[i][i] = 1 / D[i][i];
-  }
 
   for (int i = 0; i < 100; i++) {
     next = D_inv * (b - (L + U) * current);
+
+    for (int j = 0; j < b.Deg(); j++) {
+      next[j] /= D[j][j];
+    }
 
     // ベクトルの差を検証
     Rvector diff;
