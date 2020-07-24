@@ -131,7 +131,7 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
 }
 
 // SOR法を用いて Ax=b を解きます。
-Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
+Rvector SORMethod(Rmatrix A, Rvector b, double omega = 1.5, double dx = 0.001) {
   if (!A.isSquare() || A.Row() != b.Deg()) {
     throw std::invalid_argument("行列またはベクトルのサイズが不正です。");
   }
@@ -144,15 +144,15 @@ Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
 
   Rvector current = b, next(b.Deg());
 
-  for (int i = 0; i < 100;i++){
-    for (int j = 0; j < b.Deg();j++){
+  for (int i = 0; i < 100; i++) {
+    for (int j = 0; j < b.Deg(); j++) {
       next[j] = current[j];
 
       double buf = b[j];
-      for (int k = 0; k < j;k++){
+      for (int k = 0; k < j; k++) {
         buf -= A[j][k] * next[k];
       }
-      for (int k = j; k < b.Deg();k++){
+      for (int k = j; k < b.Deg(); k++) {
         buf -= A[j][k] * current[k];
       }
 
