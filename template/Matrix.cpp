@@ -89,7 +89,7 @@ class basic_Matrix {
     return ret;
   }
 
-  basic_Matrix<T> operator*(int scalar) {
+  basic_Matrix<T> operator*(double scalar) {
     basic_Matrix<T> ret = *this;
     for (auto &i : ret.data) {
       for (auto &j : i) {
@@ -105,7 +105,7 @@ class basic_Matrix {
 
   void operator*=(basic_Matrix<T> m) { *this = operator*(m); }
 
-  void operator*=(int scalar) { *this = operator*(scalar); }
+  void operator*=(double scalar) { *this = operator*(scalar); }
 
   basic_Matrix<T> operator^(basic_Matrix<T> ma) {
     basic_Matrix<T> ret(row * ma.row, collumn * ma.collumn);
@@ -242,7 +242,7 @@ class basic_Vector {
 
   basic_Vector<T> operator-(basic_Vector<T> v) { return operator+(v * -1); }
 
-  basic_Vector<T> operator*(int scalar) {
+  basic_Vector<T> operator*(double scalar) {
     basic_Vector<T> ret = *this;
     for (int i = 0; i < ret.degree; i++) {
       ret[i] *= scalar;
@@ -251,13 +251,13 @@ class basic_Vector {
   }
 
   template <class U>
-  friend basic_Vector<U> operator*(int scalar, basic_Vector<U> v);
+  friend basic_Vector<U> operator*(double scalar, basic_Vector<U> v);
 
   void operator+=(basic_Vector<T> v) { *this = operator+(v); }
 
   void operator-=(basic_Vector<T> v) { *this = operator-(v); }
 
-  void operator*=(int scalar) { *this = operator*(scalar); }
+  void operator*=(double scalar) { *this = operator*(scalar); }
 
   operator basic_Matrix<T>() {
     std::vector<std::vector<T>> v(degree, std::vector<T>(1));
@@ -290,7 +290,7 @@ class basic_Vector {
 };
 
 template <class U>
-basic_Vector<U> operator*(int scalar, basic_Vector<U> v) {
+basic_Vector<U> operator*(double scalar, basic_Vector<U> v) {
   return v.operator*(scalar);
 }
 
