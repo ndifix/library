@@ -130,4 +130,44 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
   }
 }
 
+// SOR法を用いて Ax=b を解きます。
+Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
+  if (!A.isSquare() || A.Row() != b.Deg()) {
+    throw std::invalid_argument("行列またはベクトルのサイズが不正です。");
+  }
+  for (int i = 0; i < A.Row(); i++) {
+    if (A[i][i] == 0) {
+      throw std::invalid_argument(
+          "対角成分に0が含まれているためSOR法を使えません。");
+    }
+  }
+
+  Rvector current = b, next(b.Deg());
+
+  for (int i = 0; i < 100;i++){
+    for (int j = 0; j < b.Deg();j++){
+      next[j] = current[j];
+
+      double buf = b[j];
+      for (int k = 0; k < j;k++){
+        buf -= A[j][k] * next[k];
+      }
+      for (int k = j; k < b.Deg();k++){
+        buf -= A[j][k] * current[k];
+      }
+
+      next[j] += omega / A[j][j] * buf;
+    }
+
+    // ベクトルの差を検証
+    Rvector diff;
+    diff = next - current;
+    if (diff.Norm() < dx) {
+      return next;
+    }
+
+    current = next;
+  }
+}
+
 }  // namespace ndifix
