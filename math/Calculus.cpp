@@ -35,6 +35,26 @@ Rvector DCT2(Rvector v) {
   return ret;
 }
 
+// v を逆離散cos変換します。
+Rvector DCT3(Rvector v) {
+  Rmatrix T(v.Deg(), v.Deg());
+  Rvector ret(v.Deg());
+  double pi = std::acos(-1);
+  // ret = T*v * sqrt(2/n)
+  for (int i = 0; i < v.Deg(); i++) {
+    T[i][0] = std::sqrt(2) / 2;
+  }
+  for (int i = 1; i < v.Deg(); i++) {
+    for (int j = 0; j < v.Deg(); j++) {
+      T[j][i] = std::cos(pi * i * (2 * j + 1) / 2 / v.Deg());
+    }
+  }
+
+  ret = T * v * std::sqrt(2.0 / ret.Deg());
+
+  return ret;
+}
+
 // LDU分解をしてLを返します。
 Rmatrix LDU_L(Rmatrix &m) {
   Rmatrix ret(m.Row(), m.Collumn());
