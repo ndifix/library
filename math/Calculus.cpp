@@ -14,6 +14,13 @@ double Integral(double (*f)(double), double a, double b) {
   return ret;
 }
 
+// df/dx |x=x0 を計算します。
+// 中央差分近似
+double Diff(double (*f)(double), double x0) {
+  double h = 0.00001;
+  return (f(x0 + h) - f(x0 - h)) / 2.0 / h;
+}
+
 // vを離散cos変換します。
 Rvector DCT2(Rvector v) {
   Rmatrix T(v.Deg(), v.Deg());
