@@ -98,6 +98,23 @@ class APP0 : public Segment {
   }
 };
 
+class APP1 : public Segment {
+ public:
+  using Segment::Segment;
+
+  void ReadSegment(std::ifstream& ifs) {
+    std::cout << "APP1\t"
+              << "Exchangeable Image File Format (Exif)" << std::endl;
+    Segment::ReadSegment(ifs);
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    std::cout << std::endl;
+  }
+};
+
 class DQTTable {
  private:
   char pt;
