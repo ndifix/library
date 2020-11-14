@@ -93,6 +93,70 @@ class APP0 : public Segment {
   }
 };
 
+class DQTTable {
+ private:
+  char pt;
+  std::vector<std::vector<int>> Q =
+      std::vector<std::vector<int>>(8, std::vector<int>(8));
+
+ public:
+  DQTTable() {}
+
+  void ReadQuantizationTable(std::vector<char>::iterator& itr) {
+    pt = *itr;
+    itr++;
+    for (int i = 0; i < 64; i++) {
+      if ((unsigned int)pt & 0xf0) {
+        char f, s;
+        f = *itr;
+        itr++;
+        s = *itr;
+        itr++;
+        Q[i / 8][i % 8] = GetInt(f, s);
+      } else {
+        char f;
+        f = *itr;
+        itr++;
+        Q[i / 8][i % 8] = GetInt(0, f);
+      }
+    }
+  }
+
+  void ShowTable() {
+    std::cout << "Quantization Table\t";
+    PrintHex(pt);
+    std::cout << std::endl;
+
+    for (int i = 0; i < 64; i++) {
+      std::cout << Q[i / 8][i % 8];
+      if (i % 8 == 7)
+        std::cout << std::endl;
+      else
+        std::cout << " ";
+    }
+  }
+};
+
+class DQT : public Segment {
+ private:
+  std::vector<DQTTable> tables;
+
+ public:
+  using Segment::Segment;
+
+  void ReadSegment(std::ifstream& ifs) {
+    Segment::ReadSegment(ifs);
+
+    auto begin = param.begin();
+    while (begin != param.end()) {
+      DQTTable dqtTable;
+      dqtTable.ReadQuantizationTable(begin);
+      dqtTable.ShowTable();
+      tables.push_back(dqtTable);
+    }
+  }
+};
+
 }  // namespace ndifix
 
 #endif

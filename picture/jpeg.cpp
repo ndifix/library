@@ -49,6 +49,7 @@ class ImageData {
 class Frame {
  private:
   APP0 app0;
+  std::vector<DQT> dqts;
   std::vector<Segment> segments;
   ImageData imageData;
 
@@ -83,6 +84,13 @@ class Frame {
       if (marker == App0) {
         app0.set(marker);
         app0.ReadSegment(ifs);
+        continue;
+      }
+      if (marker == Dqt) {
+        DQT dqt;
+        dqt.set(marker);
+        dqt.ReadSegment(ifs);
+        dqts.push_back(dqt);
         continue;
       }
       Segment seg(marker);
