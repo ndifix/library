@@ -34,7 +34,7 @@ class ImageData {
   }
 
   void ShowBin() {
-    std::cout << "Image Data" << std::endl;
+    std::cout << "Image Data\t" << binary.size() << "Bytes" << std::endl;
     for (int i = 0; i < binary.size(); i++) {
       PrintHex(binary[i]);
       if (i % 16 == 15)

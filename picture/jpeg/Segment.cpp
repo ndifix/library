@@ -89,7 +89,7 @@ class APP0 : public Segment {
   void ShowData() {
     Segment::ShowData();
     std::cout << "Ver: " << Ver << std::endl;
-    std::cout << "U =\t" << U << std::endl;
+    std::cout << "U =\t" << U << (U == 1 ? ": inch" : ": cm") << std::endl;
     std::cout << "Xd=\t" << Xd << std::endl;
     std::cout << "Yd=\t" << Yd << std::endl;
     std::cout << "Xt=\t" << Xt << std::endl;
@@ -218,6 +218,8 @@ class DHTTable {
   }
 
   void ShowTable() {
+    std::cout << "Tc=\t" << Tc << (Tc == 0 ? ": 8bit" : ": 16bit") << std::endl;
+    std::cout << "Th=\t" << Th << std::endl;
     std::cout << "Huffman Table" << std::endl;
     for (int i = 0; i < 16; i++) {
       std::cout << i << ":\t";
@@ -274,6 +276,23 @@ class SOF : public Segment {
   // quantization table destination selector
   std::vector<int> Tq;
 
+  std::string CtoColor(int c) {
+    switch (c) {
+      case 1:
+        return "Y ";
+      case 2:
+        return "Cb";
+      case 3:
+        return "Cr";
+      case 4:
+        return "I ";
+      case 5:
+        return "Q ";
+      default:
+        return "  ";
+    }
+  }
+
  public:
   using Segment::Segment;
 
@@ -310,7 +329,15 @@ class SOF : public Segment {
     std::cout << "P =\t" << P << std::endl;
     std::cout << "Y =\t" << Y << std::endl;
     std::cout << "X =\t" << X << std::endl;
-    std::cout << "Nf=\t" << Nf << std::endl;
+    std::cout << "Nf=\t" << Nf << "\t\t";
+    if (Nf == 1) std::cout << "grayscale" << std::endl;
+    if (Nf == 3) std::cout << "YCbCr or YIQ" << std::endl;
+    if (Nf == 4) std::cout << "CMYK" << std::endl;
+    std::cout << "  \tH\tV\tTq" << std::endl;
+    for (int i = 0; i < Nf; i++) {
+      std::cout << CtoColor(C[i]) << "\t" << H[i] << "\t" << V[i] << "\t"
+                << Tq[i] << std::endl;
+    }
     std::cout << std::endl;
   }
 };
