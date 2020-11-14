@@ -315,6 +315,65 @@ class SOF : public Segment {
   }
 };
 
+class SOS : public Segment {
+ private:
+  // number of image components in scan
+  int Ns;
+  // scan component selector
+  std::vector<int> C;
+  // DC table destination selector
+  std::vector<int> Td;
+  // AC table destination selector
+  std::vector<int> Ta;
+  // start/end of spectral selection
+  int Ss, Se;
+  // successive approximation bit position high/low
+  int Ah, Al;
+
+ public:
+  using Segment::Segment;
+
+  void ReadSegment(std::ifstream& ifs) {
+    std::cout << "SOS\t\t"
+              << "Start of Scan" << std::endl;
+    Segment::ReadSegment(ifs);
+
+    Ns = GetInt(0, param[0]);
+    C = Td = Ta = std::vector<int>(Ns);
+    int index = 1;
+    for (int i = 0; i < Ns; i++) {
+      C[i] = GetInt(0, param[index]);
+      index++;
+      Td[i] = GetInt(0, param[index]) / 16;
+      Ta[i] = GetInt(0, param[index]) % 16;
+      index++;
+    }
+
+    Ss = GetInt(0, param[index]);
+    index++;
+    Se = GetInt(0, param[index]);
+    index++;
+    Ah = GetInt(0, param[index]) / 16;
+    Al = GetInt(0, param[index]) % 16;
+
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    std::cout << "Ns=\t" << Ns << std::endl;
+    std::cout << "C \tTd\tTa" << std::endl;
+    for (int i = 0; i < Ns; i++) {
+      std::cout << C[i] << "\t\t" << Td[i] << "\t\t" << Ta[i] << std::endl;
+    }
+    std::cout << "Ss=\t" << Ss << std::endl;
+    std::cout << "Se=\t" << Se << std::endl;
+    std::cout << "Ah=\t" << Ah << std::endl;
+    std::cout << "Al=\t" << Al << std::endl;
+    std::cout << std::endl;
+  }
+};
+
 }  // namespace ndifix
 
 #endif

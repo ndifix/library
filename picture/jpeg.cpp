@@ -53,6 +53,7 @@ class Frame {
   SOF sof;
   std::vector<DQT> dqts;
   std::vector<DHT> dhts;
+  SOS sos;
   std::vector<Segment> segments;
   ImageData imageData;
 
@@ -112,13 +113,16 @@ class Frame {
         sof.ReadSegment(ifs);
         continue;
       }
+      if (marker == Sos) {
+        sos.set(marker);
+        sos.ReadSegment(ifs);
+        break;
+      }
       Segment seg(marker);
       seg.ReadSegment(ifs);
       std::cout << "Unknown Segment:\t\t";
       seg.ShowData();
       segments.push_back(seg);
-
-      if (marker == Sos) break;
     }
 
     imageData.ReadImageData(ifs);
