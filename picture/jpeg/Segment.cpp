@@ -157,6 +157,67 @@ class DQT : public Segment {
   }
 };
 
+class DHTTable {
+ private:
+  // table class
+  int Tc;
+  // huffman table destination identifier
+  int Th;
+  // length of huffman codes
+  std::vector<int> L = std::vector<int>(16);
+  // value associated with Huffman code
+  std::vector<std::vector<char>> V = std::vector<std::vector<char>>(16);
+
+ public:
+  void ReadHuffmanTable(std::vector<char>::iterator& itr) {
+    Tc = GetInt(0, *itr) / 16;
+    Th = GetInt(0, *itr) % 16;
+    itr++;
+    for (int i = 0; i < 16; i++) {
+      L[i] = GetInt(0, *itr);
+      V[i].resize(L[i]);
+      itr++;
+    }
+    for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < L[i]; j++) {
+        V[i][j] = GetInt(0, *itr);
+        itr++;
+      }
+    }
+  }
+
+  void ShowTable() {
+    std::cout << "Huffman Table" << std::endl;
+    for (int i = 0; i < 16; i++) {
+      std::cout << i << ":\t";
+      for (int j = 0; j < L[i]; j++) {
+        PrintHex(V[i][j]);
+        std::cout << "\t";
+      }
+      std::cout << std::endl;
+    }
+  }
+};
+
+class DHT : public Segment {
+ private:
+  std::vector<DHTTable> tables;
+
+ public:
+  using Segment::Segment;
+
+  void ReadSegment(std::ifstream& ifs) {
+    Segment::ReadSegment(ifs);
+    auto begin = param.begin();
+    while (begin != param.end()) {
+      DHTTable dhtTable;
+      dhtTable.ReadHuffmanTable(begin);
+      dhtTable.ShowTable();
+      tables.push_back(dhtTable);
+    }
+  }
+};
+
 class SOF : public Segment {
  private:
   // precision
