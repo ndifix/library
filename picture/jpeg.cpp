@@ -71,7 +71,6 @@ class Frame {
     Marker marker(ifs);
     if (marker == Soi) {
       std::cout << "解析の開始" << std::endl;
-      std::cout << "marker\tlength" << std::endl;
     } else {
       std::stringstream message;
       message << "開始マーカーが不整合。: ";
@@ -109,6 +108,8 @@ class Frame {
       }
       Segment seg(marker);
       seg.ReadSegment(ifs);
+      std::cout << "Unknown Segment:\t\t";
+      seg.ShowData();
       segments.push_back(seg);
 
       if (marker == Sos) break;

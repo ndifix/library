@@ -32,18 +32,15 @@ class Segment {
     ifs.get(s);
     length = GetInt(f, s);
 
-    marker.print();
-    std::cout << std::hex << "\t" << std::setfill('0') << std::right
-              << std::setw(4) << length << std::endl
-              << std::dec;
     param.resize(length - 2);
     for (auto& i : param) ifs.get(i);
-    ShowData();
   }
 
   void ShowData() {
-    for (auto i : param) PrintHex(i);
-    std::cout << std::endl;
+    std::cout << "marker: ";
+    marker.print();
+    std::cout << std::hex << "\tlength: " << std::setfill('0') << std::right
+              << std::setw(4) << length << std::dec << std::endl;
   }
 };
 
@@ -70,11 +67,12 @@ class APP0 : public Segment {
   using Segment::Segment;
 
   void ReadSegment(std::ifstream& ifs) {
+    std::cout << "APP0\t"
+              << "JPEG File Interchange Format (JFIF)" << std::endl;
     Segment::ReadSegment(ifs);
     char id[5] = {param[0], param[1], param[2], param[3], param[4]};
     if (id == "JFIF") ID = "JFIF";
     setVer(param[5], param[6]);
-    std::cout << "Ver: " << Ver << std::endl;
     U = GetInt(0, param[7]);
     Xd = GetInt(param[8], param[9]);
     Yd = GetInt(param[10], param[11]);
@@ -85,11 +83,18 @@ class APP0 : public Segment {
     read thumbnail
     */
 
-    std::cout << "U=" << U << std::endl;
-    std::cout << "Xd=" << Xd << std::endl;
-    std::cout << "Yd=" << Yd << std::endl;
-    std::cout << "Xt=" << Xt << std::endl;
-    std::cout << "Yt=" << Yt << std::endl;
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    std::cout << "Ver: " << Ver << std::endl;
+    std::cout << "U =\t" << U << std::endl;
+    std::cout << "Xd=\t" << Xd << std::endl;
+    std::cout << "Yd=\t" << Yd << std::endl;
+    std::cout << "Xt=\t" << Xt << std::endl;
+    std::cout << "Yt=\t" << Yt << std::endl;
+    std::cout << std::endl;
   }
 };
 
@@ -134,6 +139,7 @@ class DQTTable {
       else
         std::cout << " ";
     }
+    std::cout << std::endl;
   }
 };
 
@@ -145,15 +151,23 @@ class DQT : public Segment {
   using Segment::Segment;
 
   void ReadSegment(std::ifstream& ifs) {
+    std::cout << "DQT\t\t"
+              << "Define Quantization Table" << std::endl;
     Segment::ReadSegment(ifs);
 
     auto begin = param.begin();
     while (begin != param.end()) {
       DQTTable dqtTable;
       dqtTable.ReadQuantizationTable(begin);
-      dqtTable.ShowTable();
       tables.push_back(dqtTable);
     }
+
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    for (auto table : tables) table.ShowTable();
   }
 };
 
@@ -196,6 +210,7 @@ class DHTTable {
       }
       std::cout << std::endl;
     }
+    std::cout << std::endl;
   }
 };
 
@@ -207,14 +222,22 @@ class DHT : public Segment {
   using Segment::Segment;
 
   void ReadSegment(std::ifstream& ifs) {
+    std::cout << "DHT\t\t"
+              << "Define Huffman Table" << std::endl;
     Segment::ReadSegment(ifs);
     auto begin = param.begin();
     while (begin != param.end()) {
       DHTTable dhtTable;
       dhtTable.ReadHuffmanTable(begin);
-      dhtTable.ShowTable();
       tables.push_back(dhtTable);
     }
+
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    for (auto table : tables) table.ShowTable();
   }
 };
 
@@ -238,6 +261,8 @@ class SOF : public Segment {
   using Segment::Segment;
 
   void ReadSegment(std::ifstream& ifs) {
+    std::cout << "SOF\t\t"
+              << "Baseline DCT Process Frame" << std::endl;
     Segment::ReadSegment(ifs);
     P = GetInt(0, param[0]);
     Y = GetInt(param[1], param[2]);
@@ -260,10 +285,16 @@ class SOF : public Segment {
       index++;
     }
 
-    std::cout << "P=" << P << std::endl;
-    std::cout << "Y=" << Y << std::endl;
-    std::cout << "X=" << X << std::endl;
-    std::cout << "Nf=" << Nf << std::endl;
+    // ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    std::cout << "P =\t" << P << std::endl;
+    std::cout << "Y =\t" << Y << std::endl;
+    std::cout << "X =\t" << X << std::endl;
+    std::cout << "Nf=\t" << Nf << std::endl;
+    std::cout << std::endl;
   }
 };
 
