@@ -49,6 +49,7 @@ class ImageData {
 class Frame {
  private:
   APP0 app0;
+  SOF sof;
   std::vector<DQT> dqts;
   std::vector<Segment> segments;
   ImageData imageData;
@@ -91,6 +92,11 @@ class Frame {
         dqt.set(marker);
         dqt.ReadSegment(ifs);
         dqts.push_back(dqt);
+        continue;
+      }
+      if (marker == Sof) {
+        sof.set(marker);
+        sof.ReadSegment(ifs);
         continue;
       }
       Segment seg(marker);

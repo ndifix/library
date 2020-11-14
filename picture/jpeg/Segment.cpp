@@ -157,6 +157,55 @@ class DQT : public Segment {
   }
 };
 
+class SOF : public Segment {
+ private:
+  // precision
+  int P;
+  // image size
+  int X, Y;
+  // Number of image components in frame
+  int Nf;
+
+  // component id
+  std::vector<int> C;
+  // sampling factor (horizontal / vertical)
+  std::vector<int> H, V;
+  // quantization table destination selector
+  std::vector<int> Tq;
+
+ public:
+  using Segment::Segment;
+
+  void ReadSegment(std::ifstream& ifs) {
+    Segment::ReadSegment(ifs);
+    P = GetInt(0, param[0]);
+    Y = GetInt(param[1], param[2]);
+    X = GetInt(param[3], param[4]);
+    Nf = GetInt(0, param[5]);
+
+    C.resize(Nf);
+    H.resize(Nf);
+    V.resize(Nf);
+    Tq.resize(Nf);
+
+    int index = 6;
+    for (int i = 0; i < Nf; i++) {
+      C[i] = GetInt(0, param[index]);
+      index++;
+      H[i] = GetInt(0, param[index]) / 16;
+      V[i] = GetInt(0, param[index]) % 16;
+      index++;
+      Tq[i] = GetInt(0, param[index]);
+      index++;
+    }
+
+    std::cout << "P=" << P << std::endl;
+    std::cout << "Y=" << Y << std::endl;
+    std::cout << "X=" << X << std::endl;
+    std::cout << "Nf=" << Nf << std::endl;
+  }
+};
+
 }  // namespace ndifix
 
 #endif
