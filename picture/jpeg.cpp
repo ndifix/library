@@ -105,8 +105,40 @@ class Segment {
 };
 
 class ImageData {
+ private:
+  std::vector<char> binary;
+
  public:
-  void ReadImageData(std::ifstream& ifs) {}
+  void ReadImageData(std::ifstream& ifs) {
+    bool end = false;
+    while (true) {
+      char c;
+      ifs.get(c);
+      if (end && c == Eoi[1]) {
+        binary.pop_back();
+        break;
+      }
+      if (c == Eoi[0]) {
+        end = true;
+      } else {
+        end = false;
+      }
+      binary.push_back(c);
+    }
+    ShowBin();
+  }
+
+  void ShowBin() {
+    std::cout << "Image Data" << std::endl;
+    for (int i = 0; i < binary.size(); i++) {
+      PrintHex(binary[i]);
+      if (i % 16 == 15)
+        std::cout << std::endl;
+      else
+        std::cout << " ";
+    }
+    std::cout << std::endl << std::dec;
+  }
 };
 
 class Frame {
