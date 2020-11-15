@@ -117,6 +117,7 @@ class Frame {
         continue;
       }
       if (marker.isSOF()) {
+        sof.set(marker);
         sof.ReadSegment(ifs);
         continue;
       }

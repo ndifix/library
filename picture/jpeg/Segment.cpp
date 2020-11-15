@@ -256,12 +256,30 @@ class SOF : public Segment {
     }
   }
 
+  std::string id() { return "SOF" + std::to_string(marker.get() % 16) + "\t"; }
+
+  std::string description() {
+    if (marker.get() == 0xc0) return "Baseline DCT";
+    if (marker.get() == 0xc1) return "Extended sequential DCT";
+    if (marker.get() == 0xc2) return "Progressive DCT";
+    if (marker.get() == 0xc3) return "Lossless (sequential)";
+    if (marker.get() == 0xc5) return "Differential sequential DCT";
+    if (marker.get() == 0xc6) return "Differential progressive DCT";
+    if (marker.get() == 0xc7) return "Differential lossless (sequential)";
+    if (marker.get() == 0xc9) return "Extended sequential DCT";
+    if (marker.get() == 0xca) return "Progressive DCT";
+    if (marker.get() == 0xcb) return "Lossless(sequential)";
+    if (marker.get() == 0xcd) return "Differential sequential DCT";
+    if (marker.get() == 0xce) return "Differential progressive DCT";
+    if (marker.get() == 0xcf) return "Differential lossless (sequential)";
+    return "Unknown";
+  }
+
  public:
-  SOF() { marker.set(0xc0); }
+  void set(Marker m) { marker = m; }
 
   void ReadSegment(std::ifstream& ifs) {
-    std::cout << "SOF\t\t"
-              << "Baseline DCT Process Frame" << std::endl;
+    std::cout << id() << description() << std::endl;
     Segment::ReadSegment(ifs);
     P = GetInt(0, param[0]);
     Y = GetInt(param[1], param[2]);
