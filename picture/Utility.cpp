@@ -7,6 +7,7 @@
 namespace ndifix {
 
 bool DebugMode = true;
+bool DebugBinaryImageData = false;
 
 void PrintHex(char c) {
   std::cout << std::hex << (unsigned int)c % 256 / 16

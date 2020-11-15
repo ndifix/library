@@ -15,13 +15,14 @@ class ImageData {
 
  public:
   void ReadImageData(std::ifstream& ifs) {
-    std::cout << "Reading Image Data" << std::endl;
+    std::cout << "Image Data\t";
     bool end = false;
     while (true) {
       char c;
       ifs.get(c);
-      if (end && c == (char)0xd9) {
+      if (end && c != (char)0x00) {
         binary.pop_back();
+        ifs.seekg(-2, std::ios::cur);
         break;
       }
       if (c == (char)0xff) {
@@ -32,11 +33,12 @@ class ImageData {
       binary.push_back(c);
     }
 
-    if (DebugMode) ShowBin();
+    std::cout << binary.size() << "Bytes" << std::endl;
+
+    if (DebugBinaryImageData) ShowBin();
   }
 
   void ShowBin() {
-    std::cout << "Image Data\t" << binary.size() << "Bytes" << std::endl;
     for (int i = 0; i < binary.size(); i++) {
       PrintHex(binary[i]);
       if (i % 16 == 15)
@@ -44,7 +46,7 @@ class ImageData {
       else
         std::cout << " ";
     }
-    std::cout << std::endl << std::dec;
+    std::cout << std::endl << std::endl << std::dec;
   }
 };
 
@@ -57,7 +59,7 @@ class Frame {
   std::vector<DHT> dhts;
   SOS sos;
   std::vector<Segment> segments;
-  ImageData imageData;
+  std::vector<ImageData> imageData;
 
  public:
   Frame() {}
@@ -84,6 +86,10 @@ class Frame {
 
     while (true) {
       marker.set(ifs);
+      if (marker.isEOI()) {
+        std::cout << "Analysis end." << std::endl;
+        break;
+      }
       if (marker.isAPP()) {
         APP1 app;
         switch (marker.get()) {
@@ -123,7 +129,10 @@ class Frame {
       }
       if (marker.isSOS()) {
         sos.ReadSegment(ifs);
-        break;
+        ImageData data;
+        data.ReadImageData(ifs);
+        imageData.push_back(data);
+        continue;
       }
       Segment seg(marker);
       seg.ReadSegment(ifs);
@@ -132,9 +141,6 @@ class Frame {
       segments.push_back(seg);
     }
 
-    imageData.ReadImageData(ifs);
-
-    std::cout << "Analysis end." << std::endl;
     ifs.close();
   }
 };
