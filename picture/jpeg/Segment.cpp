@@ -81,7 +81,7 @@ class APP0 : public Segment {
     read thumbnail
     */
 
-    // ShowData();
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {
@@ -104,7 +104,8 @@ class APP1 : public Segment {
     std::cout << "APP1\t"
               << "Exchangeable Image File Format (Exif)" << std::endl;
     Segment::ReadSegment(ifs);
-    // ShowData();
+
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {
@@ -177,7 +178,7 @@ class DQT : public Segment {
       tables.push_back(dqtTable);
     }
 
-    // ShowData();
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {
@@ -249,7 +250,7 @@ class DHT : public Segment {
       tables.push_back(dhtTable);
     }
 
-    // ShowData();
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {
@@ -319,7 +320,7 @@ class SOF : public Segment {
       index++;
     }
 
-    // ShowData();
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {
@@ -381,7 +382,7 @@ class SOS : public Segment {
     Ah = GetInt(0, param[index]) / 16;
     Al = GetInt(0, param[index]) % 16;
 
-    // ShowData();
+    if (DebugMode) ShowData();
   }
 
   void ShowData() {

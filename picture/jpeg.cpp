@@ -15,6 +15,7 @@ class ImageData {
 
  public:
   void ReadImageData(std::ifstream& ifs) {
+    std::cout << "Reading Image Data" << std::endl;
     bool end = false;
     while (true) {
       char c;
@@ -30,7 +31,8 @@ class ImageData {
       }
       binary.push_back(c);
     }
-    ShowBin();
+
+    if (DebugMode) ShowBin();
   }
 
   void ShowBin() {
@@ -67,15 +69,15 @@ class Frame {
       ifs.open(path, std::ios::in | std::ios::binary);
       ifs.exceptions(std::ios::failbit);
     } catch (const std::exception& e) {
-      std::cerr << "ファイルを開けませんでした。: " << e.what() << std::endl;
+      std::cerr << "file cannot open: " << e.what() << std::endl;
     }
 
     Marker marker(ifs);
     if (marker == Soi) {
-      std::cout << "解析の開始" << std::endl;
+      std::cout << "Analysis begin" << std::endl;
     } else {
       std::stringstream message;
-      message << "開始マーカーが不整合。: ";
+      message << "Invalid start marker: ";
       message << std::hex;
       message << (unsigned int)marker[0] % 256;
       message << (unsigned int)marker[1] % 256;
@@ -122,6 +124,7 @@ class Frame {
 
     imageData.ReadImageData(ifs);
 
+    std::cout << "Analysis end." << std::endl;
     ifs.close();
   }
 };

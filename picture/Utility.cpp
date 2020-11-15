@@ -6,6 +6,8 @@
 
 namespace ndifix {
 
+bool DebugMode = true;
+
 void PrintHex(char c) {
   std::cout << std::hex << (unsigned int)c % 256 / 16
             << (unsigned int)c % 256 % 16 << std::dec;
