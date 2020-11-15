@@ -1,46 +1,10 @@
 #ifndef NDIFIX_JPEG_SEGMENT
 #define NDIFIX_JPEG_SEGMENT
 
-#include <fstream>
-#include <string>
-#include <vector>
-
 #include "../RGB.cpp"
-#include "../Utility.cpp"
-#include "Marker.cpp"
+#include "BasicSegment.cpp"
 
 namespace ndifix {
-
-class Segment {
- protected:
-  // marker 2 byte
-  Marker marker;
-  // length 2 byte
-  int length;
-  // segment paramater N=length-2 byte
-  std::vector<char> param;
-
- public:
-  Segment(Marker m) { marker = m; }
-  Segment() {}
-
-  void ReadSegment(std::ifstream& ifs) {
-    char f, s;
-    ifs.get(f);
-    ifs.get(s);
-    length = GetInt(f, s);
-
-    param.resize(length - 2);
-    for (auto& i : param) ifs.get(i);
-  }
-
-  void ShowData() {
-    std::cout << "marker: ";
-    marker.print();
-    std::cout << std::hex << "\tlength: " << std::setfill('0') << std::right
-              << std::setw(4) << length << std::dec << std::endl;
-  }
-};
 
 class APP0 : public Segment {
  private:
