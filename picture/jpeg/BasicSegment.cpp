@@ -34,8 +34,7 @@ class BasicSegment {
   }
 
   void ShowData() {
-    std::cout << "marker: ";
-    marker.print();
+    std::cout << "marker: " << marker;
     std::cout << std::hex << "\tlength: " << std::setfill('0') << std::right
               << std::setw(4) << length << std::dec << std::endl;
   }

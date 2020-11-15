@@ -9,58 +9,45 @@ namespace ndifix {
 
 class Marker {
  private:
-  char first, second;
+  unsigned char sec;
 
  public:
   Marker() {}
-  Marker(int f, int s) {
-    first = f;
-    second = s;
-  }
+  Marker(int s) { sec = (unsigned int)s % 256; }
   Marker(std::ifstream& ifs) {
-    ifs.get(first);
-    ifs.get(second);
+    ifs.get();
+    char c;
+    ifs.get(c);
+    sec = c;
   }
 
-  void set(int f, int s) {
-    first = f;
-    second = s;
-  }
-
+  void set(int s) { sec = (unsigned int)s % 256; }
   void set(std::ifstream& ifs) {
-    ifs.get(first);
-    ifs.get(second);
+    ifs.get();
+    char c;
+    ifs.get(c);
+    sec = c;
   }
 
-  bool operator==(Marker m) {
-    if (m.first == first && m.second == second)
-      return true;
-    else
-      return false;
-  }
+  unsigned char get() { return sec; }
 
-  char operator[](int i) {
-    if (i == 0) return first;
-    if (i == 1) return second;
-    throw std::out_of_range("index must be 0 or 1");
-  }
+  bool operator==(Marker m) { return m.sec == sec; }
 
-  void print() {
-    PrintHex(first);
-    PrintHex(second);
-  }
+  bool isSOI() { return sec == 0xd8; }
+  bool isEOI() { return sec == 0xd9; }
+  bool isAPP() { return sec >= 0xe0 && sec <= 0xef; }
+  bool isDQT() { return sec == 0xdb; }
+  bool isDHT() { return sec == 0xc4; }
+  bool isSOF() { return (sec / 16 == 12 && sec % 4 != 0) || sec == 0xc0; }
+  bool isSOS() { return sec == 0xda; }
+
+  friend std::ostream& operator<<(std::ostream& os, Marker m);
 };
 
-Marker Soi(0xff, 0xd8);
-Marker Eoi(0xff, 0xd9);
-
-Marker App0(0xff, 0xe0);
-Marker App1(0xff, 0xe1);
-
-Marker Dqt(0xff, 0xdb);
-Marker Dht(0xff, 0xc4);
-Marker Sof(0xff, 0xc0);
-Marker Sos(0xff, 0xda);
+std::ostream& operator<<(std::ostream& os, Marker m) {
+  os << "ff" << std::hex << (unsigned int)m.sec << std::dec;
+  return os;
+}
 
 }  // namespace ndifix
 

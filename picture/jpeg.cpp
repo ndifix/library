@@ -20,11 +20,11 @@ class ImageData {
     while (true) {
       char c;
       ifs.get(c);
-      if (end && c == Eoi[1]) {
+      if (end && c == (char)0xd9) {
         binary.pop_back();
         break;
       }
-      if (c == Eoi[0]) {
+      if (c == (char)0xff) {
         end = true;
       } else {
         end = false;
@@ -73,45 +73,54 @@ class Frame {
     }
 
     Marker marker(ifs);
-    if (marker == Soi) {
+
+    if (marker.isSOI()) {
       std::cout << "Analysis begin" << std::endl;
     } else {
       std::stringstream message;
-      message << "Invalid start marker: ";
-      message << std::hex;
-      message << (unsigned int)marker[0] % 256;
-      message << (unsigned int)marker[1] % 256;
+      message << "Invalid start marker: " << marker;
       throw std::invalid_argument(message.str());
     }
 
     while (true) {
       marker.set(ifs);
-      if (marker == App0) {
-        app0.ReadSegment(ifs);
-        continue;
-      }
-      if (marker == App1) {
+      if (marker.isAPP()) {
         APP1 app;
-        app.ReadSegment(ifs);
+        switch (marker.get()) {
+          case 0xe0:
+            app0.ReadSegment(ifs);
+            break;
+          case 0xe1:
+            app.ReadSegment(ifs);
+            app1.push_back(app);
+            break;
+          default:
+            Segment seg(marker);
+            seg.ReadSegment(ifs);
+            std::cout << "Unknown APPSegment:\t\t";
+            seg.ShowData();
+            segments.push_back(seg);
+            break;
+        }
         continue;
       }
-      if (marker == Dqt) {
+      if (marker.isDQT()) {
         DQT dqt;
         dqt.ReadSegment(ifs);
         dqts.push_back(dqt);
         continue;
       }
-      if (marker == Dht) {
+      if (marker.isDHT()) {
         DHT dht;
         dht.ReadSegment(ifs);
         dhts.push_back(dht);
         continue;
       }
-      if (marker == Sof) {
+      if (marker.isSOF()) {
         sof.ReadSegment(ifs);
         continue;
       }
-      if (marker == Sos) {
+      if (marker.isSOS()) {
         sos.ReadSegment(ifs);
         break;
       }
