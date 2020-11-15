@@ -24,8 +24,6 @@ class Segment {
   Segment(Marker m) { marker = m; }
   Segment() {}
 
-  void set(Marker m) { marker = m; }
-
   void ReadSegment(std::ifstream& ifs) {
     char f, s;
     ifs.get(f);
@@ -64,7 +62,7 @@ class APP0 : public Segment {
   }
 
  public:
-  using Segment::Segment;
+  APP0() { marker = App0; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "APP0\t"
@@ -100,7 +98,7 @@ class APP0 : public Segment {
 
 class APP1 : public Segment {
  public:
-  using Segment::Segment;
+  APP1() { marker = App1; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "APP1\t"
@@ -165,7 +163,7 @@ class DQT : public Segment {
   std::vector<DQTTable> tables;
 
  public:
-  using Segment::Segment;
+  DQT() { marker = Dqt; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "DQT\t\t"
@@ -238,7 +236,7 @@ class DHT : public Segment {
   std::vector<DHTTable> tables;
 
  public:
-  using Segment::Segment;
+  DHT() { marker = Dht; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "DHT\t\t"
@@ -294,7 +292,7 @@ class SOF : public Segment {
   }
 
  public:
-  using Segment::Segment;
+  SOF() { marker = Sof; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "SOF\t\t"
@@ -358,7 +356,7 @@ class SOS : public Segment {
   int Ah, Al;
 
  public:
-  using Segment::Segment;
+  SOS() { marker = Sos; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "SOS\t\t"

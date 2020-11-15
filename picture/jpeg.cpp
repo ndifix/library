@@ -85,36 +85,31 @@ class Frame {
     while (true) {
       marker.set(ifs);
       if (marker == App0) {
-        app0.set(marker);
         app0.ReadSegment(ifs);
         continue;
       }
       if (marker == App1) {
-        APP1 app(marker);
+        APP1 app;
         app.ReadSegment(ifs);
         continue;
       }
       if (marker == Dqt) {
         DQT dqt;
-        dqt.set(marker);
         dqt.ReadSegment(ifs);
         dqts.push_back(dqt);
         continue;
       }
       if (marker == Dht) {
         DHT dht;
-        dht.set(marker);
         dht.ReadSegment(ifs);
         dhts.push_back(dht);
         continue;
       }
       if (marker == Sof) {
-        sof.set(marker);
         sof.ReadSegment(ifs);
         continue;
       }
       if (marker == Sos) {
-        sos.set(marker);
         sos.ReadSegment(ifs);
         break;
       }
