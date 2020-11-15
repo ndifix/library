@@ -10,6 +10,9 @@
 *.userosscache
 *.sln.docstates
 *.out
+test_env.cpp
+test_out
+test_in
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -340,4 +343,3 @@ ASALocalRun/
 
 # BeatPulse healthcheck temp database
 healthchecksdb
-test_env.cpp
