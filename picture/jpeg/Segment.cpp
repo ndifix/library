@@ -185,7 +185,8 @@ class DHTTable {
     std::cout << "Th=\t" << Th << std::endl;
     std::cout << "Huffman Table" << std::endl;
     for (int i = 0; i < 16; i++) {
-      std::cout << i << ":\t";
+      if (L[i] == 0) continue;
+      std::cout << i + 1 << ":\t";
       for (int j = 0; j < L[i]; j++) {
         PrintHex(V[i][j]);
         std::cout << "\t";
