@@ -15,19 +15,17 @@ class ImageData {
  public:
   void ReadImageData(std::ifstream& ifs) {
     std::cout << "Image Data\t";
-    bool end = false;
     while (true) {
       char c;
       ifs.get(c);
-      if (end && c != (char)0x00) {
-        binary.pop_back();
-        ifs.seekg(-2, std::ios::cur);
-        break;
-      }
+
       if (c == (char)0xff) {
-        end = true;
-      } else {
-        end = false;
+        ifs.get(c);
+        if (c == (char)0xda || c == (char)0xc4 || c == (char)0xd9) {
+          ifs.seekg(-2, std::ios::cur);
+          break;
+        }
+        binary.push_back((char)0xff);
       }
       binary.push_back(c);
     }
