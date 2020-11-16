@@ -1,6 +1,8 @@
 #ifndef NDIFIX_JPEG_SEGMENT
 #define NDIFIX_JPEG_SEGMENT
 
+#include <map>
+
 #include "../RGB.cpp"
 #include "BasicSegment.cpp"
 
@@ -187,6 +189,31 @@ class DHTTable {
   // value associated with Huffman code
   std::vector<std::vector<char>> V = std::vector<std::vector<char>>(16);
 
+  // value maps to code
+  std::map<unsigned int, std::string> huffmanVC;
+  // code maps to value
+  std::map<std::string, unsigned int> huffmanCV;
+
+  void CreateCode() {
+    std::vector<int> huffsize;
+    int code = 0;
+    for (int i = 0; i < 16; i++) {
+      for (int j = 0; j < L[i]; j++) {
+        std::string s;
+        for (int k = i; k >= 0; k--) {
+          if (code & (1 << k))
+            s += '1';
+          else
+            s += '0';
+        }
+        huffmanVC[(unsigned int)V[i][j] % 256] = s;
+        huffmanCV[s] = (unsigned int)V[i][j] % 256;
+        code++;
+      }
+      code *= 2;
+    }
+  }
+
  public:
   void ReadHuffmanTable(std::vector<char>::iterator& itr) {
     Tc = GetInt(0, *itr) / 16;
@@ -203,6 +230,8 @@ class DHTTable {
         itr++;
       }
     }
+
+    CreateCode();
   }
 
   void ShowTable() {
@@ -218,6 +247,12 @@ class DHTTable {
       }
       std::cout << std::endl;
     }
+    std::cout << "Val\t\tCode" << std::endl;
+    for (auto i : huffmanCV) {
+      std::cout << std::hex << (i.second / 0x10) << (i.second % 0x10)
+                << std::dec;
+      std::cout << "\t\t" << i.first << std::endl;
+    }
     std::cout << std::endl;
   }
 };
@@ -228,6 +263,8 @@ class DHT : public Segment {
 
  public:
   DHT() { marker.set(0xc4); }
+
+  std::vector<DHTTable> getTables() { return tables; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "DHT\t\t"
