@@ -137,7 +137,7 @@ class DQTTable {
   void ShowTable() {
     std::cout << "Quantization Table\t";
     PrintHex(pt);
-    std::cout << std::endl;
+    std::cout << ((unsigned int)pt & 0x10 ? ": 16bit" : ": 8bit") << std::endl;
 
     for (int i = 0; i < 64; i++) {
       std::cout << Q[i / 8][i % 8];
@@ -235,7 +235,7 @@ class DHTTable {
   }
 
   void ShowTable() {
-    std::cout << "Tc=\t" << Tc << (Tc == 0 ? ": 8bit" : ": 16bit") << std::endl;
+    std::cout << "Tc=\t" << Tc << (Tc == 0 ? ": DC" : ": AC") << std::endl;
     std::cout << "Th=\t" << Th << std::endl;
     std::cout << "Huffman Table" << std::endl;
     for (int i = 0; i < 16; i++) {
