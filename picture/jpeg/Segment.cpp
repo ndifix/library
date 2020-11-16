@@ -364,6 +364,23 @@ class SOS : public Segment {
   // successive approximation bit position high/low
   int Ah, Al;
 
+  std::string CtoColor(int c) {
+    switch (c) {
+      case 1:
+        return "Y ";
+      case 2:
+        return "Cb";
+      case 3:
+        return "Cr";
+      case 4:
+        return "I ";
+      case 5:
+        return "Q ";
+      default:
+        return "  ";
+    }
+  }
+
  public:
   SOS() { marker.set(0xda); }
 
@@ -396,9 +413,10 @@ class SOS : public Segment {
   void ShowData() {
     Segment::ShowData();
     std::cout << "Ns=\t" << Ns << std::endl;
-    std::cout << "C \tTd\tTa" << std::endl;
+    std::cout << "  \tTd\tTa" << std::endl;
     for (int i = 0; i < Ns; i++) {
-      std::cout << C[i] << "\t\t" << Td[i] << "\t\t" << Ta[i] << std::endl;
+      std::cout << CtoColor(C[i]) << "\t" << Td[i] << "\t\t" << Ta[i]
+                << std::endl;
     }
     std::cout << "Ss=\t" << Ss << std::endl;
     std::cout << "Se=\t" << Se << std::endl;
