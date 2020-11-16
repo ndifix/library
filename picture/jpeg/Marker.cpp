@@ -40,6 +40,7 @@ class Marker {
   bool isDHT() { return sec == 0xc4; }
   bool isSOF() { return (sec / 16 == 12 && sec % 4 != 0) || sec == 0xc0; }
   bool isSOS() { return sec == 0xda; }
+  bool isDRI() { return sec == 0xdd; }
 
   friend std::ostream& operator<<(std::ostream& os, Marker m);
 };

@@ -78,6 +78,31 @@ class APP1 : public Segment {
   }
 };
 
+class DRI : public Segment {
+ private:
+  // restart interval
+  int Ri;
+
+ public:
+  DRI() { marker.set(0xdd); }
+
+  void ReadSegment(std::ifstream& ifs) {
+    std::cout << "DRI\t\t"
+              << "Define Restart Interval" << std::endl;
+    Segment::ReadSegment(ifs);
+
+    Ri = GetInt(param[0], param[1]);
+
+    if (DebugMode) ShowData();
+  }
+
+  void ShowData() {
+    Segment::ShowData();
+    std::cout << "Ri=\t" << Ri << std::endl;
+    std::cout << std::endl;
+  }
+};
+
 class DQTTable {
  private:
   char pt;

@@ -14,6 +14,7 @@ class Frame {
  private:
   APP0 app0;
   std::vector<APP1> app1;
+  DRI dri;
   SOF sof;
   std::vector<DQT> dqts;
   std::vector<DHT> dhts;
@@ -68,6 +69,10 @@ class Frame {
             segments.push_back(seg);
             break;
         }
+        continue;
+      }
+      if (marker.isDRI()) {
+        dri.ReadSegment(ifs);
         continue;
       }
       if (marker.isDQT()) {
