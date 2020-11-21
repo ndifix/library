@@ -117,6 +117,9 @@ class DQTTable {
  public:
   DQTTable() {}
 
+  int getTq() { return Tq; }
+  std::vector<std::vector<int>> getQ() { return Q; }
+
   void ReadQuantizationTable(std::vector<char>::iterator& itr) {
     char pt = *itr;
     Pq = (unsigned int)pt / 256;
@@ -162,6 +165,8 @@ class DQT : public Segment {
 
  public:
   DQT() { marker.set(0xdb); }
+
+  std::vector<DQTTable> getTables() { return tables; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "DQT\t\t"
@@ -360,6 +365,7 @@ class SOF : public Segment {
   int getNf() { return Nf; }
   std::vector<int> getH() { return H; }
   std::vector<int> getV() { return V; }
+  std::vector<int> getTq() { return Tq; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << id() << description() << std::endl;

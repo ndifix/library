@@ -85,6 +85,15 @@ class DataUnit {
     if (DebugBinaryImageData) ShowUnit();
   }
 
+  void DeQuantize(DQTTable table) {
+    auto Q = table.getQ();
+    for (int i = 0; i < 8; i++) {
+      for (int j = 0; j < 8; j++) {
+        block[i][j] *= Q[i][j];
+      }
+    }
+  }
+
   void ShowUnit() {
     for (int i = 0; i < 64; i++) {
       std::cout << block[i / 8][i % 8];
@@ -105,6 +114,7 @@ class MCU {
   std::vector<int> H, V;
   std::vector<int> Td;
   std::vector<int> Ta;
+  std::vector<int> Tq;
   std::vector<DataUnit> blocks;
 
  public:
@@ -114,6 +124,7 @@ class MCU {
     V = sof.getV();
     Td = sos.getTd();
     Ta = sos.getTa();
+    Tq = sof.getTq();
   }
 
   void ReadMCU(std::vector<char> &bin, std::string &buf, HTables HuffTables) {
@@ -130,6 +141,20 @@ class MCU {
       }
     }
   }
+
+  void DeQuantize(std::vector<DQTTable> QTables) {
+    int index = 0;
+    for (int c = 0; c < Nf; c++) {
+      DQTTable table;
+      for (auto t : QTables) {
+        if (t.getTq() == Tq[c]) table = t;
+      }
+      for (int i = 0; i < H[c] * V[c]; i++) {
+        blocks[index].DeQuantize(table);
+        index++;
+      }
+    }
+  }
 };
 
 class ImageData {
@@ -140,6 +165,7 @@ class ImageData {
   SOS sos;
   std::vector<MCU> mcus;
   std::vector<DHTTable> HuffTables;
+  std::vector<DQTTable> QTables;
 
   void readMCU() {
     for (int b = 0; b < bins.size(); b++) {
@@ -180,8 +206,15 @@ class ImageData {
     bins.push_back(tmp);
   }
 
+  void deQuantize() {
+    for (auto mcu : mcus) mcu.DeQuantize(QTables);
+  }
+
  public:
-  void setTable(std::vector<DHTTable> &tables) { HuffTables = tables; }
+  void setTable(std::vector<DHTTable> &tables, std::vector<DQTTable> &qTable) {
+    HuffTables = tables;
+    QTables = qTable;
+  }
   void setSegment(SOF &sofSeg, SOS &sosSeg) {
     sof = sofSeg;
     sos = sosSeg;
@@ -207,6 +240,7 @@ class ImageData {
     std::cout << binary.size() << "Bytes" << std::endl;
     eraseFF00AndSplitRST();
     readMCU();
+    deQuantize();
     if (DebugBinaryImageData) ShowBin();
   }
 

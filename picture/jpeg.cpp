@@ -19,6 +19,7 @@ class Frame {
   std::vector<DQT> dqts;
   std::vector<DHT> dhts;
   std::vector<DHTTable> HuffTable;
+  std::vector<DQTTable> QTable;
   SOS sos;
   std::vector<Segment> segments;
   ImageData imageData;
@@ -80,6 +81,8 @@ class Frame {
         DQT dqt;
         dqt.ReadSegment(ifs);
         dqts.push_back(dqt);
+        auto table = dqt.getTables();
+        for (auto t : table) QTable.push_back(t);
         continue;
       }
       if (marker.isDHT()) {
@@ -98,7 +101,7 @@ class Frame {
       }
       if (marker.isSOS()) {
         sos.ReadSegment(ifs);
-        imageData.setTable(HuffTable);
+        imageData.setTable(HuffTable, QTable);
         imageData.setSegment(sof, sos);
         imageData.ReadImageData(ifs);
         continue;
