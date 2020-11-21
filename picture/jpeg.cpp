@@ -18,9 +18,10 @@ class Frame {
   SOF sof;
   std::vector<DQT> dqts;
   std::vector<DHT> dhts;
+  std::vector<DHTTable> HuffTable;
   SOS sos;
   std::vector<Segment> segments;
-  std::vector<ImageData> imageData;
+  ImageData imageData;
 
  public:
   Frame() {}
@@ -85,18 +86,21 @@ class Frame {
         DHT dht;
         dht.ReadSegment(ifs);
         dhts.push_back(dht);
+        auto table = dht.getTables();
+        for (auto t : table) HuffTable.push_back(t);
         continue;
       }
       if (marker.isSOF()) {
         sof.set(marker);
         sof.ReadSegment(ifs);
+        if (!marker.isSOF0()) throw std::exception();
         continue;
       }
       if (marker.isSOS()) {
         sos.ReadSegment(ifs);
-        ImageData data;
-        data.ReadImageData(ifs);
-        imageData.push_back(data);
+        imageData.setTable(HuffTable);
+        imageData.setSegment(sof, sos);
+        imageData.ReadImageData(ifs);
         continue;
       }
       Segment seg(marker);

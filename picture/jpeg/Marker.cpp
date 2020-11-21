@@ -42,6 +42,8 @@ class Marker {
   bool isSOS() { return sec == 0xda; }
   bool isDRI() { return sec == 0xdd; }
 
+  bool isSOF0() { return sec == 0xc0; }
+
   friend std::ostream& operator<<(std::ostream& os, Marker m);
 };
 

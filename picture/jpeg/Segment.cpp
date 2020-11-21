@@ -215,6 +215,16 @@ class DHTTable {
   }
 
  public:
+  int getTc() { return Tc; }
+  int getTh() { return Th; }
+
+  bool contains(std::string s) {
+    for (auto itr : huffmanCV)
+      if (itr.first == s) return true;
+    return false;
+  }
+  int getVal(std::string s) { return huffmanCV[s]; }
+
   void ReadHuffmanTable(std::vector<char>::iterator& itr) {
     Tc = GetInt(0, *itr) / 16;
     Th = GetInt(0, *itr) % 16;
@@ -341,6 +351,10 @@ class SOF : public Segment {
  public:
   void set(Marker m) { marker = m; }
 
+  int getNf() { return Nf; }
+  std::vector<int> getH() { return H; }
+  std::vector<int> getV() { return V; }
+
   void ReadSegment(std::ifstream& ifs) {
     std::cout << id() << description() << std::endl;
     Segment::ReadSegment(ifs);
@@ -420,6 +434,9 @@ class SOS : public Segment {
 
  public:
   SOS() { marker.set(0xda); }
+
+  std::vector<int> getTd() { return Td; }
+  std::vector<int> getTa() { return Ta; }
 
   void ReadSegment(std::ifstream& ifs) {
     std::cout << "SOS\t\t"
