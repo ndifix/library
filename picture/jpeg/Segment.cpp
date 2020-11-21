@@ -107,7 +107,10 @@ class DRI : public Segment {
 
 class DQTTable {
  private:
-  char pt;
+  // table element precision
+  int Pq;
+  // table destination identifier
+  int Tq;
   std::vector<std::vector<int>> Q =
       std::vector<std::vector<int>>(8, std::vector<int>(8));
 
@@ -115,7 +118,9 @@ class DQTTable {
   DQTTable() {}
 
   void ReadQuantizationTable(std::vector<char>::iterator& itr) {
-    pt = *itr;
+    char pt = *itr;
+    Pq = (unsigned int)pt / 256;
+    Tq = (unsigned int)pt % 256;
     itr++;
     for (int i = 0; i < 64; i++) {
       if ((unsigned int)pt & 0xf0) {
@@ -135,9 +140,10 @@ class DQTTable {
   }
 
   void ShowTable() {
-    std::cout << "Quantization Table\t";
-    PrintHex(pt);
-    std::cout << ((unsigned int)pt & 0x10 ? ": 16bit" : ": 8bit") << std::endl;
+    std::cout << "Quantization Table" << std::endl;
+    std::cout << "Pq=" << Pq;
+    std::cout << (Pq == 1 ? ": 16bit" : ": 8bit") << std::endl;
+    std::cout << "Tq=" << Tq << std::endl;
 
     for (int i = 0; i < 64; i++) {
       std::cout << Q[i / 8][i % 8];
