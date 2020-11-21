@@ -135,30 +135,49 @@ class MCU {
 class ImageData {
  private:
   std::vector<char> binary;
+  std::vector<std::vector<char>> bins;
   SOF sof;
   SOS sos;
   std::vector<MCU> mcus;
   std::vector<DHTTable> HuffTables;
 
   void readMCU() {
-    auto bin = binary;
-    std::string buf;
-    while (bin.size() != 0 || buf.size() != 0) {
-      if (bin.size() == 0) {
-        break;
+    for (int b = 0; b < bins.size(); b++) {
+      auto bin = bins[b];
+      std::string buf;
+      while (bin.size() != 0 || buf.size() != 0) {
+        if (bin.size() == 0) {
+          break;
+        }
+        MCU mcu(sof, sos);
+        mcu.ReadMCU(bin, buf, HuffTables);
+        mcus.push_back(mcu);
       }
-      MCU mcu(sof, sos);
-      mcu.ReadMCU(bin, buf, HuffTables);
-      mcus.push_back(mcu);
     }
   }
 
-  void eraseFF00() {
-    for (int i = 0; i < binary.size() - 1; i++) {
-      if (binary[i] == (char)0xff && binary[i + 1] == (char)0x00) {
-        binary.erase(binary.begin() + i + 1);
+  void eraseFF00AndSplitRST() {
+    std::vector<char> tmp;
+    for (int i = 0; i < binary.size(); i++) {
+      if (binary[i] != (char)0xff) {
+        tmp.push_back(binary[i]);
+        continue;
+      }
+      if (i + 1 < binary.size() && binary[i + 1] == (char)0x00) {
+        tmp.push_back(binary[i]);
+        i++;
+        continue;
+      }
+      if (i + 1 < binary.size() &&
+          13 * 16 <= ((unsigned int)binary[i + 1] % 256) &&
+          ((unsigned int)binary[i + 1] % 256) <= 13 * 16 + 7) {
+        i++;
+        bins.push_back(tmp);
+        tmp.clear();
+        continue;
       }
     }
+    bins.push_back(tmp);
   }
 
  public:
@@ -186,7 +205,7 @@ class ImageData {
     }
 
     std::cout << binary.size() << "Bytes" << std::endl;
-    eraseFF00();
+    eraseFF00AndSplitRST();
     readMCU();
     if (DebugBinaryImageData) ShowBin();
   }
