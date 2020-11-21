@@ -155,6 +155,10 @@ class MCU {
       }
     }
   }
+
+  void ShowBlocks() {
+    for (auto block : blocks) block.ShowUnit();
+  }
 };
 
 class ImageData {
@@ -253,6 +257,14 @@ class ImageData {
         std::cout << " ";
     }
     std::cout << std::endl << std::endl << std::dec;
+  }
+
+  void ShowMCU() {
+    std::cout << std::endl;
+    for (auto mcu : mcus) {
+      mcu.ShowBlocks();
+      std::cout << "---------------------------" << std::endl << std::endl;
+    }
   }
 };
 
