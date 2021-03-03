@@ -99,10 +99,26 @@ class Z_p {
 
   void operator/=(Z_p<p> a) { *this = operator/(a); }
 
+  Z_p<p> operator=(int a) {
+    Z_p<p> ret(a);
+    *this = ret;
+    return ret;
+  }
+
+  template <int q>
+  friend std::ostream &operator<<(std::ostream &os, const Z_p<q> &a);
+
 #pragma endregion
 
   int Val() { return val; }
 };
+
+template <int q>
+std::ostream &operator<<(std::ostream &os, const Z_p<q> &a) {
+  os << a.val;
+  return os;
+}
+
 }  // namespace ndifix
 
 #endif
