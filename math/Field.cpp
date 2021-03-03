@@ -125,6 +125,13 @@ class Z_p {
     return ret;
   }
 
+  bool operator==(Z_p<p> a) { return val == a.val; }
+
+  bool operator==(int i) {
+    Z_p<p> tmp(i);
+    return tmp == *this;
+  }
+
   template <int q>
   friend std::ostream &operator<<(std::ostream &os, const Z_p<q> &a);
 
