@@ -42,6 +42,29 @@ class Z_p {
     val = v % p;
   }
 
+#pragma region Operators
+
+  Z_p<p> operator+(Z_p<p> a) {
+    Z_p<p> ret;
+    ret.val = (Val() + a.Val()) % p;
+    return ret;
+  }
+
+  Z_p<p> operator-(Z_p<p> a) {
+    Z_p<p> ret;
+    ret.val = (Val() + p - a.Val()) % p;
+    return ret;
+  }
+
+  Z_p<p> operator*(Z_p<p> a) {
+    Z_p<p> ret;
+    long long lv = val, la = a.val, lp = p;
+    ret.val = (lv * la) % lp;
+    return ret;
+  }
+
+#pragma endregion
+
   int Val() { return val; }
 };
 }  // namespace ndifix
