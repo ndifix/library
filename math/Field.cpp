@@ -99,6 +99,16 @@ class Z_p {
 
   void operator/=(Z_p<p> a) { *this = operator/(a); }
 
+  Z_p<p> operator++() {
+    *this += 1;
+    return *this;
+  }
+
+  Z_p<p> operator--() {
+    *this -= 1;
+    return *this;
+  }
+
   Z_p<p> operator=(int a) {
     Z_p<p> ret(a);
     *this = ret;
