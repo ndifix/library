@@ -91,6 +91,14 @@ class Z_p {
     return operator*(Inv(a));
   }
 
+  void operator+=(Z_p<p> a) { *this = operator+(a); }
+
+  void operator-=(Z_p<p> a) { *this = operator-(a); }
+
+  void operator*=(Z_p<p> a) { *this = operator*(a); }
+
+  void operator/=(Z_p<p> a) { *this = operator/(a); }
+
 #pragma endregion
 
   int Val() { return val; }
