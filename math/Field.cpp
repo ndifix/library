@@ -63,6 +63,16 @@ class Z_p {
     return ret;
   }
 
+  // 元の位数を表します。
+  int Order() {
+    auto tmp = *this;
+    for (int i = 1; i < p; i++) {
+      if (tmp.val == 1) return i;
+      tmp *= *this;
+    }
+    return -1;
+  }
+
 #pragma region Operators
 
   Z_p<p> operator+(Z_p<p> a) {
