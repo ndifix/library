@@ -21,6 +21,18 @@ class Z_p {
     return true;
   }
 
+  // ax + by = 1 を満たす(x,y)を表します。
+  void extGCD(int a, int b, int &x, int &y) {
+    if (b == 0) {
+      x = 1;
+      y = 0;
+      return;
+    }
+    extGCD(b, a % b, y, x);
+    y -= a / b * x;
+    return;
+  }
+
  public:
   Z_p() {
     if (!isPrime(p)) {
@@ -42,6 +54,15 @@ class Z_p {
     val = v % p;
   }
 
+  // aの積に関する逆元を表します。
+  Z_p<p> Inv(Z_p<p> a) {
+    // ax + py = 1 となる x が求めるもの。
+    int x, y;
+    extGCD(a.Val(), p, x, y);
+    Z_p<p> ret(x);
+    return ret;
+  }
+
 #pragma region Operators
 
   Z_p<p> operator+(Z_p<p> a) {
@@ -61,6 +82,13 @@ class Z_p {
     long long lv = val, la = a.val, lp = p;
     ret.val = (lv * la) % lp;
     return ret;
+  }
+
+  Z_p<p> operator/(Z_p<p> a) {
+    if (a.val == 0) {
+      throw std::invalid_argument("零除算。");
+    }
+    return operator*(Inv(a));
   }
 
 #pragma endregion
