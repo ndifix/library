@@ -1,4 +1,5 @@
 #include <cmath>
+#include <iostream>
 namespace ndifix {
 
 // Euler法による積分を行う。

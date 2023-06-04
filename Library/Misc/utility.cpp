@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <algorithm>
 
 std::ostream& operator<<(std::ostream& os,std::map<int,int>& obj){
     for(auto itr=obj.begin();itr!=obj.end();itr++){

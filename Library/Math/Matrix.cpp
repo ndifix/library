@@ -1,7 +1,7 @@
 #ifndef NDIFIX_MATRIX
 #define NDIFIX_MATRIX
 
-#include "../template/Matrix.cpp"
+#include "../Template/Matrix.cpp"
 
 #include <cmath>
 #include <iostream>
