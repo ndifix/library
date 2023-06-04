@@ -50,13 +50,8 @@ class Gragh{
         for(int j=0;j<V;j++)
             table[i][j] = std::min(table[i][j], table[i][k]+table[k][j]);
     }
-    int W(int s,int g){
-        if(table.size()==0)init_table();
-
-    }
-	int bellmanFord(){
-
-	}
+    int W(int s,int g);
+	int bellmanFord();
 };
 
 class Node{

@@ -8,20 +8,20 @@ class Quoziente{
     int gcd(int a,int b){if(a<b)return gcd(b,a);if(a%b==0)return b;return gcd(b, a%b);}
     void nomalize(){int div=gcd(numer,denom);numer/=div;denom/=div;}
 
-    void operator+=(int n){}
-    void operator-=(int n){}
-    void operator*=(int n){}
-    void operator/=(int n){}
-    Quoziente operator+(int n){}
-    Quoziente operator-(int n){}
-    Quoziente operator*(int n){}
-    Quoziente operator/(int n){}
-    void operator+=(Quoziente n){}
-    void operator-=(Quoziente n){}
-    void operator*=(Quoziente n){}
-    void operator/=(Quoziente n){}
-    Quoziente operator+(Quoziente n){}
-    Quoziente operator-(Quoziente n){}
-    Quoziente operator*(Quoziente n){}
-    Quoziente operator/(Quoziente n){}
+    void operator+=(int n);
+    void operator-=(int n);
+    void operator*=(int n);
+    void operator/=(int n);
+    Quoziente operator+(int n);
+    Quoziente operator-(int n);
+    Quoziente operator*(int n);
+    Quoziente operator/(int n);
+    void operator+=(Quoziente n);
+    void operator-=(Quoziente n);
+    void operator*=(Quoziente n);
+    void operator/=(Quoziente n);
+    Quoziente operator+(Quoziente n);
+    Quoziente operator-(Quoziente n);
+    Quoziente operator*(Quoziente n);
+    Quoziente operator/(Quoziente n);
 };

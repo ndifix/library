@@ -146,7 +146,7 @@ class SegmentTree {
 
   // compで定義されたもののindexを返します。
   // [s, e) -> index(T)
-  int FindIndexByRange(int s, int e) {}
+  int FindIndexByRange(int s, int e);
 
   // 木全体を出力します。
   void PrintAll() {

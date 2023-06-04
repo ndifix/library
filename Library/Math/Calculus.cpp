@@ -128,6 +128,7 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
 
     current = next;
   }
+  return next;
 }
 
 // SOR法を用いて Ax=b を解きます。
@@ -168,6 +169,7 @@ Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
 
     current = next;
   }
+  return next;
 }
 
 }  // namespace ndifix
