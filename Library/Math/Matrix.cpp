@@ -12,11 +12,12 @@
 namespace ndifix {
 
 // 複素行列を表します。
-class Cmatrix : public basic_Matrix<Complex> {
-  using basic_Matrix::basic_Matrix;
+template <size_t Row, size_t Col>
+class Cmatrix : public basic_Matrix<Complex, Row, Col> {
+  using basic_Matrix<Complex, Row, Col>::basic_Matrix;
 
  public:
-  Cmatrix operator=(basic_Matrix<Complex> m) {
+  Cmatrix operator=(basic_Matrix<Complex, Row, Col> m) {
     this->row = m.Row();
     this->collumn = m.Collumn();
     this->data = m.Data();
@@ -25,11 +26,12 @@ class Cmatrix : public basic_Matrix<Complex> {
 };
 
 // 複素ベクトルを表します。
-class Cvector : public basic_Vector<Complex> {
-  using basic_Vector::basic_Vector;
+template <size_t Deg>
+class Cvector : public basic_Vector<Complex, Deg> {
+  using basic_Vector<Complex, Deg>::basic_Vector;
 
  public:
-  Cvector operator=(basic_Vector<Complex> m) {
+  Cvector operator=(basic_Vector<Complex, Deg> m) {
     this->degree = m.Deg();
     this->data = m.Data();
     return *this;
@@ -53,68 +55,15 @@ class Cvector : public basic_Vector<Complex> {
 };
 
 // 実行列を表します。
-class Rmatrix : public basic_Matrix<double> {
-  using basic_Matrix::basic_Matrix;
-
- public:
-  Rmatrix operator=(basic_Matrix<double> m) {
-    this->row = m.Row();
-    this->collumn = m.Collumn();
-    this->data = m.Data();
-    return *this;
-  }
-
-  basic_Vector<double> operator*(basic_Vector<double> v) {
-    basic_Matrix<double> rm = *this;
-    return rm.operator*(v);
-  }
-
-  basic_Matrix<double> operator*(basic_Matrix<double> m) {
-    basic_Matrix<double> rm = *this;
-    return rm.operator*(m);
-  }
-
-  void operator*=(basic_Matrix<double> m) { *this = operator*(m); }
-
-  basic_Vector<Complex> operator*(Cvector v) {
-    Cmatrix cm = *this;
-    return cm.operator*(v);
-  }
-
-  basic_Matrix<Complex> operator*(Cmatrix m) {
-    Cmatrix cm = *this;
-    return cm.operator*(m);
-  }
-
-  operator Cmatrix() {
-    Cmatrix ret(this->row, this->collumn);
-    for (int i = 0; i < this->row; i++) {
-      for (int j = 0; j < this->collumn; j++) {
-        ret[i][j] = Complex(this->data[i][j]);
-      }
-    }
-    return ret;
-  }
+template <size_t Row, size_t Col>
+class Rmatrix : public basic_Matrix<double, Row, Col> {
+  using basic_Matrix<double, Row, Col>::basic_Matrix;
 };
 
 // 実ベクトルを表します。
-class Rvector : public basic_Vector<double> {
-  using basic_Vector::basic_Vector;
-
- public:
-  Rvector operator=(basic_Vector<double> m) {
-    this->degree = m.Deg();
-    this->data = m.Data();
-    return *this;
-  }
-
-  operator Cvector() {
-    Cvector ret(this->degree);
-    for (int i = 0; i < this->degree; i++) {
-      ret[i] = Complex(this->data[i]);
-    }
-    return ret;
-  }
+template <size_t Deg>
+class Rvector : public basic_Vector<double, Deg> {
+  using basic_Vector<double, Deg>::basic_Vector;
 
   // 標準エルミート内積を返します。
   double dotP(Rvector rv) {
@@ -132,7 +81,6 @@ class Rvector : public basic_Vector<double> {
   // 2ノルムを返します。
   double Norm() { return std::sqrt(dotP(*this)); }
 };
-
 }  // namespace ndifix
 
 #endif

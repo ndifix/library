@@ -2,61 +2,37 @@
 #define NDIFIX_BASIC_MATRIX
 
 #include <iostream>
-#include <vector>
+#include <array>
 
 namespace ndifix {
-template <class T>
+template <class T, size_t Row, size_t Col>
 class basic_Matrix;
-template <class T>
+template <class T, size_t Deg>
 class basic_Vector;
 
-template <class T>
-class basic_Matrix {
- private:
-  int DefaultSize = 2;
-
- protected:
-  int row, collumn;
-  std::vector<std::vector<T>> data;
-
+template <class T, size_t Row, size_t Col>
+class basic_Matrix : public std::array<std::array<T, Col>, Row> {
  public:
-#pragma region Constructors
-
-  basic_Matrix();
-  basic_Matrix(int r, int c);
-  basic_Matrix(int size);
-  basic_Matrix(std::vector<std::vector<T>> &v);
-
-#pragma endregion
 
 #pragma region Operators
 
-  basic_Matrix<T> operator+(basic_Matrix<T> m);
-  basic_Matrix<T> operator-(basic_Matrix<T> m);
-  basic_Matrix<T> operator*(basic_Matrix<T> m);
-  basic_Matrix<T> operator*(double scalar);
-  void operator+=(basic_Matrix<T> m);
-  void operator-=(basic_Matrix<T> m);
-  void operator*=(basic_Matrix<T> m);
+  basic_Matrix<T, Row, Col> operator+(basic_Matrix<T, Row, Col> m);
+  basic_Matrix<T, Row, Col> operator-(basic_Matrix<T, Row, Col> m);
+  template<size_t Col2>
+  basic_Matrix<T, Row, Col2> operator*(basic_Matrix<T, Col, Col2> m);
+  basic_Matrix<T, Row, Col> operator*(double scalar);
+  void operator+=(basic_Matrix<T, Row, Col> m);
+  void operator-=(basic_Matrix<T, Row, Col> m);
+  void operator*=(basic_Matrix<T, Row, Col> m);
   void operator*=(double scalar);
-  basic_Matrix<T> operator^(basic_Matrix<T> ma);
+  basic_Matrix<T, Row, Col> operator^(basic_Matrix<T, Row, Col> ma);
 
-  operator basic_Vector<T>();
+  basic_Vector<T, Col> operator*(basic_Vector<T, Row> v);
 
-  basic_Vector<T> operator*(basic_Vector<T> v);
+  basic_Vector<T, Col> &operator[](int r);
 
-  std::vector<T> &operator[](int r);
-
-  template <typename U>
-  friend std::ostream &operator<<(std::ostream &os, const basic_Matrix<U> &m);
-
-#pragma endregion
-
-#pragma region Properties
-
-  int Row();
-  int Collumn();
-  std::vector<std::vector<T>> Data();
+  template <typename U, size_t R, size_t C>
+  friend std::ostream &operator<<(std::ostream &os, const basic_Matrix<U, R, C> &m);
 
 #pragma endregion
 
@@ -71,48 +47,26 @@ class basic_Matrix {
 #pragma endregion
 };  // end of basic_Matrix
 
-template <class T>
-std::ostream &operator<<(std::ostream &os, const basic_Matrix<T> &m);
-
-template <class T>
-class basic_Vector {
- protected:
-  int degree;
-  std::vector<T> data;
-
+template <class T, size_t Deg>
+class basic_Vector : public std::array<T, Deg> {
  public:
-#pragma region Constructors
-
-  basic_Vector();
-  basic_Vector(int d);
-  basic_Vector(std::vector<T> &v);
-
-#pragma endregion
 
 #pragma region Operators
 
-  basic_Vector<T> operator+(basic_Vector<T> v);
-  basic_Vector<T> operator-(basic_Vector<T> v);
-  basic_Vector<T> operator*(double scalar);
+  basic_Vector<T, Deg> operator+(basic_Vector<T, Deg> v);
+  basic_Vector<T, Deg> operator-(basic_Vector<T, Deg> v);
+  basic_Vector<T, Deg> operator*(double scalar);
 
-  template <class U>
-  friend basic_Vector<U> operator*(double scalar, basic_Vector<U> v);
+  template <class U, size_t D>
+  friend basic_Vector<U, D> operator*(double scalar, basic_Vector<U, D> v);
 
-  void operator+=(basic_Vector<T> v);
-  void operator-=(basic_Vector<T> v);
+  void operator+=(basic_Vector<T, Deg> v);
+  void operator-=(basic_Vector<T, Deg> v);
   void operator*=(double scalar);
   T &operator[](int i);
 
-  template <typename U>
-  friend std::ostream &operator<<(std::ostream &os, const basic_Vector<U> &v);
-
-#pragma endregion
-
-#pragma region Properties
-
-  int Deg();
-
-  std::vector<T> Data();
+  template <typename U, size_t D>
+  friend std::ostream &operator<<(std::ostream &os, const basic_Vector<U, D> &v);
 
 #pragma endregion
 };

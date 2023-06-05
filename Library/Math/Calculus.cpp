@@ -15,9 +15,10 @@ double Integral(double (*f)(double), double a, double b) {
 }
 
 // vを離散cos変換します。
-Rvector DCT2(Rvector v) {
-  Rmatrix T(v.Deg(), v.Deg());
-  Rvector ret(v.Deg());
+template<size_t Deg>
+Rvector<Deg> DCT2(Rvector<Deg> v) {
+  Rmatrix<Deg, Deg> T(v.Deg(), v.Deg());
+  Rvector<Deg> ret(v.Deg());
   double pi = std::acos(-1);
   // ret = T*v * sqrt(2/n)
   for (int j = 0; j < v.Deg(); j++) {
@@ -36,9 +37,10 @@ Rvector DCT2(Rvector v) {
 }
 
 // v を逆離散cos変換します。
-Rvector DCT3(Rvector v) {
-  Rmatrix T(v.Deg(), v.Deg());
-  Rvector ret(v.Deg());
+template<size_t Deg>
+Rvector<Deg> DCT3(Rvector<Deg> v) {
+  Rmatrix<Deg, Deg> T(v.Deg(), v.Deg());
+  Rvector<Deg> ret(v.Deg());
   double pi = std::acos(-1);
   // ret = T*v * sqrt(2/n)
   for (int i = 0; i < v.Deg(); i++) {
@@ -56,8 +58,9 @@ Rvector DCT3(Rvector v) {
 }
 
 // LDU分解をしてLを返します。
-Rmatrix LDU_L(Rmatrix &m) {
-  Rmatrix ret(m.Row(), m.Collumn());
+template<size_t Deg>
+Rmatrix<Deg, Deg> LDU_L(Rmatrix<Deg, Deg> &m) {
+  Rmatrix<Deg, Deg> ret(m.Row(), m.Collumn());
   for (int i = 0; i < m.Row(); i++) {
     for (int j = 0; j < i; j++) {
       ret[i][j] = m[i][j];
@@ -67,8 +70,9 @@ Rmatrix LDU_L(Rmatrix &m) {
 }
 
 // LDU分解をしてDを返します。
-Rmatrix LDU_D(Rmatrix &m) {
-  Rmatrix ret(m.Row(), m.Collumn());
+template<size_t Deg>
+Rmatrix<Deg, Deg> LDU_D(Rmatrix<Deg, Deg> &m) {
+  Rmatrix<Deg, Deg> ret(m.Row(), m.Collumn());
   for (int i = 0; i < m.Row(); i++) {
     ret[i][i] = m[i][i];
   }
@@ -77,7 +81,8 @@ Rmatrix LDU_D(Rmatrix &m) {
 }
 
 // LDU分解をしてUを返します。
-Rmatrix LDU_U(Rmatrix &m) {
+template<size_t Deg>
+Rmatrix<Deg, Deg> LDU_U(Rmatrix<Deg, Deg> &m) {
   Rmatrix ret(m.Row(), m.Collumn());
   for (int i = 0; i < m.Row(); i++) {
     for (int j = i + 1; j < m.Collumn(); j++) {
@@ -88,7 +93,8 @@ Rmatrix LDU_U(Rmatrix &m) {
 }
 
 // Jacobi法を用いて Ax=b を解きます。
-Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
+template<size_t Deg>
+Rvector<Deg> JacobiMethod(Rmatrix<Deg, Deg> A, Rvector<Deg> b, double dx = 0.001) {
   if (!A.isSquare() || A.Row() != b.Deg()) {
     throw std::invalid_argument("行列またはベクトルのサイズが不正です。");
   }
@@ -105,8 +111,8 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
 
   || x_(n+1) - x_n || < dx のときに終了する
   */
-  Rvector current = b, next;
-  Rmatrix L, D, U, D_inv;
+  Rvector<Deg> current = b, next;
+  Rmatrix<Deg, Deg> L, D, U, D_inv;
 
   L = LDU_L(A);
   D = LDU_D(A);
@@ -120,7 +126,7 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
     next = D_inv * (b - (L + U) * current);
 
     // ベクトルの差を検証
-    Rvector diff;
+    Rvector<Deg> diff;
     diff = next - current;
     if (diff.Norm() < dx) {
       return next;
@@ -132,7 +138,8 @@ Rvector JacobiMethod(Rmatrix A, Rvector b, double dx = 0.001) {
 }
 
 // SOR法を用いて Ax=b を解きます。
-Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
+template<size_t Deg>
+Rvector<Deg> SORMethod(Rmatrix<Deg, Deg> A, Rvector<Deg> b, double omega=1.5, double dx=0.001){
   if (!A.isSquare() || A.Row() != b.Deg()) {
     throw std::invalid_argument("行列またはベクトルのサイズが不正です。");
   }
@@ -143,7 +150,7 @@ Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
     }
   }
 
-  Rvector current = b, next(b.Deg());
+  Rvector<Deg> current = b, next(b.Deg());
 
   for (int i = 0; i < 100;i++){
     for (int j = 0; j < b.Deg();j++){
@@ -161,7 +168,7 @@ Rvector SORMethod(Rmatrix A, Rvector b, double omega=1.5, double dx=0.001){
     }
 
     // ベクトルの差を検証
-    Rvector diff;
+    Rvector<Deg> diff;
     diff = next - current;
     if (diff.Norm() < dx) {
       return next;

@@ -4,79 +4,44 @@
 #include <vector>
 
 namespace ndifix {
-template <class T>
-basic_Matrix<T>::basic_Matrix() {
-  row = collumn = DefaultSize;
-  data.resize(row);
-  for (int i = 0; i < row; i++) data[i].resize(collumn);
-}
-template <class T>
-basic_Matrix<T>::basic_Matrix(int r, int c) {
-  if (r < 0 || c < 0) throw std::invalid_argument("行列のサイズが不正です。");
-  row = r;
-  collumn = c;
-  data.resize(row);
-  for (int i = 0; i < row; i++) data[i].resize(collumn);
-}
-template <class T>
-basic_Matrix<T>::basic_Matrix(int size) {
-  if (size < 0) throw std::invalid_argument("行列のサイズが不正です。");
-  row = collumn = size;
-  data.resize(size);
-  for (int i = 0; i < size; i++) data[i].resize(size);
-}
-template <class T>
-basic_Matrix<T>::basic_Matrix(std::vector<std::vector<T>> &v) {
-  data = v;
-  row = data.size();
-  row > 0 ? collumn = data[0].size() : collumn = 0;
 
-  for (auto d : data) {
-    if (d.size() != collumn) {
-      throw std::invalid_argument("行列になっていません。");
-    }
-  }
-}
-
-template <class T>
-basic_Matrix<T> basic_Matrix<T>::operator+(basic_Matrix<T> m) {
-  if (row != m.row || collumn != m.collumn) {
-    throw std::invalid_argument("行列のサイズが異なります。");
-  }
-  basic_Matrix<T> ret = *this;
-  for (int i = 0; i < row; i++) {
-    for (int j = 0; j < collumn; j++) {
+template <class T, size_t Row, size_t Col>
+basic_Matrix<T, Row, Col> basic_Matrix<T, Row, Col>::operator+(
+    basic_Matrix<T, Row, Col> m) {
+  basic_Matrix<T, Row, Col> ret = *this;
+  for (int i = 0; i < Row; i++) {
+    for (int j = 0; j < Col; j++) {
       ret.data[i][j] += m.data[i][j];
     }
   }
   return ret;
 }
 
-template <class T>
-basic_Matrix<T> basic_Matrix<T>::operator-(basic_Matrix<T> m) {
+template <class T, size_t Row, size_t Col>
+basic_Matrix<T, Row, Col> basic_Matrix<T, Row, Col>::operator-(
+    basic_Matrix<T, Row, Col> m) {
   m *= -1;
   return operator+(m);
 }
 
-template <class T>
-basic_Matrix<T> basic_Matrix<T>::operator*(basic_Matrix<T> m) {
-  if (collumn != m.row) {
-    throw std::invalid_argument("積を定義できないサイズです。");
-  }
-  basic_Matrix<T> ret(row, m.collumn);
-  for (int i = 0; i < row; i++) {
-    for (int j = 0; j < m.collumn; j++) {
-      for (int k = 0; k < collumn; k++) {
-        ret.data[i][j] += data[i][k] * m.data[k][j];
+template <class T, size_t Row, size_t Col>
+template <size_t Col2>
+basic_Matrix<T, Row, Col2> basic_Matrix<T, Row, Col>::operator*(
+    basic_Matrix<T, Col, Col2> m) {
+  basic_Matrix<T, Row, Col2> ret;
+  for (int i = 0; i < Row; i++) {
+    for (int j = 0; j < Col2; j++) {
+      for (int k = 0; k < Col; k++) {
+        ret.data[i][j] += this->data[i][k] * m.data[k][j];
       }
     }
   }
   return ret;
 }
 
-template <class T>
-basic_Matrix<T> basic_Matrix<T>::operator*(double scalar) {
-  basic_Matrix<T> ret = *this;
+template <class T, size_t Row, size_t Col>
+basic_Matrix<T, Row, Col> basic_Matrix<T, Row, Col>::operator*(double scalar) {
+  basic_Matrix<T, Row, Col> ret = *this;
   for (auto &i : ret.data) {
     for (auto &j : i) {
       j *= scalar;
@@ -85,35 +50,36 @@ basic_Matrix<T> basic_Matrix<T>::operator*(double scalar) {
   return ret;
 }
 
-template <class T>
-void basic_Matrix<T>::operator+=(basic_Matrix<T> m) {
+template <class T, size_t Row, size_t Col>
+void basic_Matrix<T, Row, Col>::operator+=(basic_Matrix<T, Row, Col> m) {
   *this = operator+(m);
 }
 
-template <class T>
-void basic_Matrix<T>::operator-=(basic_Matrix<T> m) {
+template <class T, size_t Row, size_t Col>
+void basic_Matrix<T, Row, Col>::operator-=(basic_Matrix<T, Row, Col> m) {
   *this = operator-(m);
 }
 
-template <class T>
-void basic_Matrix<T>::operator*=(basic_Matrix<T> m) {
+template <class T, size_t Row, size_t Col>
+void basic_Matrix<T, Row, Col>::operator*=(basic_Matrix<T, Row, Col> m) {
   *this = operator*(m);
 }
 
-template <class T>
-void basic_Matrix<T>::operator*=(double scalar) {
+template <class T, size_t Row, size_t Col>
+void basic_Matrix<T, Row, Col>::operator*=(double scalar) {
   *this = operator*(scalar);
 }
 
-template <class T>
-basic_Matrix<T> basic_Matrix<T>::operator^(basic_Matrix<T> ma) {
-  basic_Matrix<T> ret(row * ma.row, collumn * ma.collumn);
-  for (int ar = 0; ar < row; ar++) {
-    for (int ac = 0; ac < collumn; ac++) {
-      int m = data[ar][ac];
-      for (int br = 0; br < ma.collumn; br++) {
-        for (int bc = 0; bc < ma.collumn; bc++) {
-          ret.data[ar * row + br][ac * collumn + bc] = m * ma.data[br][bc];
+template <class T, size_t Row, size_t Col>
+basic_Matrix<T, Row, Col> basic_Matrix<T, Row, Col>::operator^(
+    basic_Matrix<T, Row, Col> ma) {
+  basic_Matrix<T, Row * Row, Col * Col> ret;
+  for (int ar = 0; ar < Row; ar++) {
+    for (int ac = 0; ac < Col; ac++) {
+      int m = this->data[ar][ac];
+      for (int br = 0; br < Row; br++) {
+        for (int bc = 0; bc < Col; bc++) {
+          ret[ar * Row + br][ac * Col + bc] = m * ma.data[br][bc];
         }
       }
     }
@@ -121,61 +87,41 @@ basic_Matrix<T> basic_Matrix<T>::operator^(basic_Matrix<T> ma) {
   return ret;
 }
 
-template <class T>
-basic_Vector<T> basic_Matrix<T>::operator*(basic_Vector<T> v) {
-  return (basic_Vector<T>)operator*((basic_Matrix<T>)v);
+template <class T, size_t Row, size_t Col>
+basic_Vector<T, Col> basic_Matrix<T, Row, Col>::operator*(
+    basic_Vector<T, Row> v) {
+  return (basic_Vector<T, Col>)operator*((basic_Matrix<T, Row, Col>)v);
 }
 
-template <class T>
-std::vector<T> &basic_Matrix<T>::operator[](int r) {
-  if (0 <= r && r < row) {
-    return data[r];
-  } else {
-    throw std::invalid_argument("Segmentaion Fault");
-  }
+template <class T, size_t Row, size_t Col>
+basic_Vector<T, Col> &basic_Matrix<T, Row, Col>::operator[](int r) {
+  return this->at(r);
 }
 
-template <class T>
-std::ostream &operator<<(std::ostream &os, const basic_Matrix<T> &m);
-
-template <class T>
-int basic_Matrix<T>::Row() {
-  return row;
+template <class T, size_t Row, size_t Col>
+bool basic_Matrix<T, Row, Col>::isSquare() {
+  return Row == Col;
 }
 
-template <class T>
-int basic_Matrix<T>::Collumn() {
-  return collumn;
-}
-
-template <class T>
-std::vector<std::vector<T>> basic_Matrix<T>::Data() {
-  return data;
-};
-
-template <class T>
-bool basic_Matrix<T>::isSquare() {
-  return row == collumn;
-}
-
-template <class T>
-T basic_Matrix<T>::det() {
+template <class T, size_t Row, size_t Col>
+T basic_Matrix<T, Row, Col>::det() {
   if (!isSquare()) {
     throw std::invalid_argument("正方行列ではありません。");
   }
-  if (row == 1 && collumn == 1) {
-    return data[0][0];
+  if (Row == 1 && Col == 1) {
+    return this->data[0][0];
   }
   T ret = 0;
-  for (int i = 0; i < row; i++) {
-    ret += data[i][0] * cofactor(i, 0);
+  for (int i = 0; i < Row; i++) {
+    ret += this->data[i][0] * cofactor(i, 0);
   }
 
   return ret;
 }
-template <class T>
-T basic_Matrix<T>::cofactor(int i, int j) {
-  basic_Matrix<T> ret = *this;
+
+template <class T, size_t Row, size_t Col>
+T basic_Matrix<T, Row, Col>::cofactor(int i, int j) {
+  basic_Matrix<T, Row, Col> ret = *this;
   ret.data.erase(ret.data.begin() + i);
   ret.row--;
   for (int k = 0; k < ret.row; k++) {
@@ -185,107 +131,73 @@ T basic_Matrix<T>::cofactor(int i, int j) {
   return (i + j) % 2 == 0 ? ret.det() : ret.det() * -1;
 }
 
-template <class T>
-std::ostream &operator<<(std::ostream &os, const basic_Matrix<T> &m) {
-  for (int i = 0; i < m.row; i++) {
-    for (int j = 0; j < m.collumn; j++) {
+template <class T, size_t Row, size_t Col>
+std::ostream &operator<<(std::ostream &os, const basic_Matrix<T, Row, Col> &m) {
+  for (int i = 0; i < Row; i++) {
+    for (int j = 0; j < Col; j++) {
       os << m.data[i][j];
-      if (j != m.collumn - 1) os << "\t";
-      if (i != m.row - 1 && j == m.collumn - 1) os << "\n";
+      if (j != Col - 1) os << "\t";
+      if (i != Row - 1 && j == Col - 1) os << "\n";
     }
   }
   return os;
 }
 
-template <class T>
-basic_Vector<T>::basic_Vector() {}
-
-template <class T>
-basic_Vector<T>::basic_Vector(int d) {
-  degree = d;
-  data.resize(degree);
-}
-
-template <class T>
-basic_Vector<T>::basic_Vector(std::vector<T> &v) {
-  degree = v.size();
-  data = v;
-}
-
-template <class T>
-basic_Vector<T> basic_Vector<T>::operator+(basic_Vector<T> v) {
-  if (degree != v.degree) {
-    throw std::invalid_argument("ベクトルの次数が異なります。");
-  }
-  basic_Vector<T> ret = *this;
-  for (int i = 0; i < ret.degree; i++) {
+template <class T, size_t Deg>
+basic_Vector<T, Deg> basic_Vector<T, Deg>::operator+(basic_Vector<T, Deg> v) {
+  basic_Vector<T, Deg> ret = *this;
+  for (int i = 0; i < Deg; i++) {
     ret[i] += v[i];
   }
   return ret;
 }
 
-template <class T>
-basic_Vector<T> basic_Vector<T>::operator-(basic_Vector<T> v) {
+template <class T, size_t Deg>
+basic_Vector<T, Deg> basic_Vector<T, Deg>::operator-(basic_Vector<T, Deg> v) {
   return operator+(v * -1);
 }
 
-template <class T>
-basic_Vector<T> basic_Vector<T>::operator*(double scalar) {
-  basic_Vector<T> ret = *this;
+template <class T, size_t Deg>
+basic_Vector<T, Deg> basic_Vector<T, Deg>::operator*(double scalar) {
+  basic_Vector<T, Deg> ret = *this;
   for (int i = 0; i < ret.degree; i++) {
     ret[i] *= scalar;
   }
   return ret;
 }
 
-template <class T>
-basic_Vector<T> operator*(double scalar, basic_Vector<T> v);
+template <class T, size_t Deg>
+basic_Vector<T, Deg> operator*(double scalar, basic_Vector<T, Deg> v);
 
-template <class T>
-void basic_Vector<T>::operator+=(basic_Vector<T> v) {
+template <class T, size_t Deg>
+void basic_Vector<T, Deg>::operator+=(basic_Vector<T, Deg> v) {
   *this = operator+(v);
 }
 
-template <class T>
-void basic_Vector<T>::operator-=(basic_Vector<T> v) {
+template <class T, size_t Deg>
+void basic_Vector<T, Deg>::operator-=(basic_Vector<T, Deg> v) {
   *this = operator-(v);
 }
 
-template <class T>
-void basic_Vector<T>::operator*=(double scalar) {
+template <class T, size_t Deg>
+void basic_Vector<T, Deg>::operator*=(double scalar) {
   *this = operator*(scalar);
 }
 
-template <class T>
-T &basic_Vector<T>::operator[](int i) {
-  if (i < 0 || i >= degree) {
-    throw std::invalid_argument("Segmentaion Fault");
-  }
-  return data[i];
+template <class T, size_t Deg>
+T &basic_Vector<T, Deg>::operator[](int i) {
+  return this->at(i);
 }
 
-template <typename T>
-std::ostream &operator<<(std::ostream &os, const basic_Vector<T> &v);
-
-template <class T>
-int basic_Vector<T>::Deg() {
-  return degree;
-}
-
-template <class T>
-std::vector<T> basic_Vector<T>::Data() {
-  return data;
-};
-
-template <class T>
-basic_Vector<T> operator*(double scalar, basic_Vector<T> v) {
+template <class T, size_t Deg>
+basic_Vector<T, Deg> operator*(double scalar, basic_Vector<T, Deg> v) {
   return v.operator*(scalar);
 }
 
-template <class T>
-std::ostream &operator<<(std::ostream &os, const basic_Vector<T> &v) {
-  for (int i = 0; i < v.degree; i++) {
-    os << v.data[i] << (i != v.degree - 1 ? "\t" : "");
+template <class T, size_t Deg>
+std::ostream &operator<<(std::ostream &os, const basic_Vector<T, Deg> &v) {
+  for (int i = 0; i < Deg; i++) {
+    os << v.data[i] << (i != Deg - 1 ? "\t" : "");
   }
 
   return os;
