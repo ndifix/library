@@ -25,7 +25,6 @@ class basic_Matrix : public std::array<std::array<T, Col>, Row> {
   void operator-=(basic_Matrix<T, Row, Col> m);
   void operator*=(basic_Matrix<T, Row, Col> m);
   void operator*=(double scalar);
-  basic_Matrix<T, Row, Col> operator^(basic_Matrix<T, Row, Col> ma);
 
   basic_Vector<T, Col> operator*(basic_Vector<T, Row> v);
 

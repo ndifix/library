@@ -100,26 +100,6 @@ basic_Matrix<T, Row, Col>::operator*= (
 }
 
 template <class T, size_t Row, size_t Col>
-basic_Matrix<T, Row, Col>
-basic_Matrix<T, Row, Col>::operator^ (
-  basic_Matrix<T, Row, Col> ma
-  )
-{
-  basic_Matrix<T, Row * Row, Col * Col> ret;
-  for (int ar = 0; ar < Row; ar++) {
-    for (int ac = 0; ac < Col; ac++) {
-      int m = this->data[ar][ac];
-      for (int br = 0; br < Row; br++) {
-        for (int bc = 0; bc < Col; bc++) {
-          ret[ar * Row + br][ac * Col + bc] = m * ma.data[br][bc];
-        }
-      }
-    }
-  }
-  return ret;
-}
-
-template <class T, size_t Row, size_t Col>
 basic_Vector<T, Col>
 basic_Matrix<T, Row, Col>::operator* (
   basic_Vector<T, Row> v
