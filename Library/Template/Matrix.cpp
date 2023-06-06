@@ -6,10 +6,10 @@
 namespace ndifix {
 
 template <class T, size_t Row, size_t Col>
-basic_Matrix<T, Row, Col>
+basic_Matrix<T, Row, Col>&
 basic_Matrix<T, Row, Col>::operator+ (
-  basic_Matrix<T, Row, Col> m
-  )
+  const basic_Matrix<T, Row, Col> &m
+  ) const
 {
   basic_Matrix<T, Row, Col> ret = *this;
   for (int i = 0; i < Row; i++) {
@@ -21,10 +21,10 @@ basic_Matrix<T, Row, Col>::operator+ (
 }
 
 template <class T, size_t Row, size_t Col>
-basic_Matrix<T, Row, Col>
+basic_Matrix<T, Row, Col>&
 basic_Matrix<T, Row, Col>::operator- (
-  basic_Matrix<T, Row, Col> m
-  )
+  const basic_Matrix<T, Row, Col> &m
+  ) const
 {
   m *= -1;
   return operator+(m);
@@ -32,10 +32,10 @@ basic_Matrix<T, Row, Col>::operator- (
 
 template <class T, size_t Row, size_t Col>
 template <size_t Col2>
-basic_Matrix<T, Row, Col2>
+basic_Matrix<T, Row, Col2>&
 basic_Matrix<T, Row, Col>::operator* (
-  basic_Matrix<T, Col, Col2> m
-  )
+  const basic_Matrix<T, Col, Col2> &m
+  ) const
 {
   basic_Matrix<T, Row, Col2> ret;
   for (int i = 0; i < Row; i++) {
@@ -49,10 +49,10 @@ basic_Matrix<T, Row, Col>::operator* (
 }
 
 template <class T, size_t Row, size_t Col>
-basic_Matrix<T, Row, Col>
+basic_Matrix<T, Row, Col>&
 basic_Matrix<T, Row, Col>::operator* (
-  double scalar
-  )
+  const double scalar
+  ) const
 {
   basic_Matrix<T, Row, Col> ret = *this;
   for (auto &i : ret.data) {
@@ -66,7 +66,7 @@ basic_Matrix<T, Row, Col>::operator* (
 template <class T, size_t Row, size_t Col>
 void
 basic_Matrix<T, Row, Col>::operator+= (
-  basic_Matrix<T, Row, Col> m
+  const basic_Matrix<T, Row, Col> &m
   )
 {
   *this = operator+(m);
@@ -75,7 +75,7 @@ basic_Matrix<T, Row, Col>::operator+= (
 template <class T, size_t Row, size_t Col>
 void
 basic_Matrix<T, Row, Col>::operator-= (
-  basic_Matrix<T, Row, Col> m
+  const basic_Matrix<T, Row, Col> &m
   )
 {
   *this = operator-(m);
@@ -84,7 +84,7 @@ basic_Matrix<T, Row, Col>::operator-= (
 template <class T, size_t Row, size_t Col>
 void
 basic_Matrix<T, Row, Col>::operator*= (
-  basic_Matrix<T, Row, Col> m
+  const basic_Matrix<T, Row, Col> &m
   )
 {
   *this = operator*(m);
@@ -100,10 +100,10 @@ basic_Matrix<T, Row, Col>::operator*= (
 }
 
 template <class T, size_t Row, size_t Col>
-basic_Vector<T, Col>
+basic_Vector<T, Col>&
 basic_Matrix<T, Row, Col>::operator* (
-  basic_Vector<T, Row> v
-  )
+  const basic_Vector<T, Row> &v
+  ) const
 {
   return (basic_Vector<T, Col>)operator*((basic_Matrix<T, Row, Col>)v);
 }
@@ -111,8 +111,8 @@ basic_Matrix<T, Row, Col>::operator* (
 template <class T, size_t Row, size_t Col>
 basic_Vector<T, Col>&
 basic_Matrix<T, Row, Col>::operator[] (
-  int r
-  )
+  const int r
+  ) const
 {
   return this->at(r);
 }
@@ -120,7 +120,7 @@ basic_Matrix<T, Row, Col>::operator[] (
 template <class T, size_t Row, size_t Col>
 bool
 basic_Matrix<T, Row, Col>::isSquare (
-  )
+  ) const
 {
   return Row == Col;
 }
@@ -128,7 +128,7 @@ basic_Matrix<T, Row, Col>::isSquare (
 template <class T, size_t Row, size_t Col>
 T
 basic_Matrix<T, Row, Col>::det (
-  )
+  ) const
 {
   if (!isSquare()) {
     throw std::invalid_argument("正方行列ではありません。");
@@ -149,7 +149,7 @@ T
 basic_Matrix<T, Row, Col>::cofactor (
   int i,
   int j
-  )
+  ) const
 {
   basic_Matrix<T, Row, Col> ret = *this;
   ret.data.erase(ret.data.begin() + i);
@@ -179,10 +179,10 @@ operator<<(
 }
 
 template <class T, size_t Deg>
-basic_Vector<T, Deg>
+basic_Vector<T, Deg>&
 basic_Vector<T, Deg>::operator+ (
-  basic_Vector<T, Deg> v
-  )
+  const basic_Vector<T, Deg> &v
+  ) const
 {
   basic_Vector<T, Deg> ret = *this;
   for (int i = 0; i < Deg; i++) {
@@ -192,19 +192,19 @@ basic_Vector<T, Deg>::operator+ (
 }
 
 template <class T, size_t Deg>
-basic_Vector<T, Deg>
+basic_Vector<T, Deg>&
 basic_Vector<T, Deg>::operator- (
-  basic_Vector<T, Deg> v
-  )
+  const basic_Vector<T, Deg> &v
+  ) const
 {
   return operator+(v * -1);
 }
 
 template <class T, size_t Deg>
-basic_Vector<T, Deg>
+basic_Vector<T, Deg>&
 basic_Vector<T, Deg>::operator* (
-  double scalar
-  )
+  const double scalar
+  ) const
 {
   basic_Vector<T, Deg> ret = *this;
   for (int i = 0; i < ret.degree; i++) {
@@ -216,7 +216,7 @@ basic_Vector<T, Deg>::operator* (
 template <class T, size_t Deg>
 void
 basic_Vector<T, Deg>::operator+= (
-  basic_Vector<T, Deg> v
+  const basic_Vector<T, Deg> &v
   )
 {
   *this = operator+(v);
@@ -225,7 +225,7 @@ basic_Vector<T, Deg>::operator+= (
 template <class T, size_t Deg>
 void
 basic_Vector<T, Deg>::operator-= (
-  basic_Vector<T, Deg> v
+  const basic_Vector<T, Deg> &v
   )
 {
   *this = operator-(v);
@@ -234,7 +234,7 @@ basic_Vector<T, Deg>::operator-= (
 template <class T, size_t Deg>
 void
 basic_Vector<T, Deg>::operator*= (
-  double scalar
+  const double scalar
   )
 {
   *this = operator*(scalar);
@@ -243,17 +243,17 @@ basic_Vector<T, Deg>::operator*= (
 template <class T, size_t Deg>
 T&
 basic_Vector<T, Deg>::operator[] (
-  int i
-  )
+  const int i
+  ) const
 {
   return this->at(i);
 }
 
 template <class T, size_t Deg>
-basic_Vector<T, Deg>
+basic_Vector<T, Deg>&
 operator* (
-  double scalar,
-  basic_Vector<T, Deg> v
+  const double scalar,
+  const basic_Vector<T, Deg> &v
   )
 {
   return v.operator*(scalar);
